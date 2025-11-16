@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-require('dotenv').config();
+// Load environment variables (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // Cấu hình email transporter
 const transporter = nodemailer.createTransport({
