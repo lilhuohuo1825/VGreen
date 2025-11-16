@@ -7,23 +7,35 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Cấu hình email transporter
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'vgreenhotro@gmail.com',
-    pass: process.env.EMAIL_PASS || '', // Cần cấu hình App Password từ Gmail
-  },
-});
+const EMAIL_USER = process.env.EMAIL_USER || 'vgreenhotro@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS;
+const EMAIL_ENABLED = !!(EMAIL_USER && EMAIL_PASS);
 
-// Kiểm tra cấu hình email
-if (!process.env.EMAIL_PASS) {
-  console.warn('⚠️  EMAIL_PASS chưa được cấu hình trong .env file');
-  console.warn('   Vui lòng xem hướng dẫn trong backend/EMAIL_SETUP.md');
+let transporter = null;
+
+if (EMAIL_ENABLED) {
+  transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
+    },
+  });
+} else {
+  console.warn('⚠️  Email service is disabled. EMAIL_USER and EMAIL_PASS environment variables are required.');
 }
 
 // Route để gửi email liên hệ
 router.post('/send', async (req, res) => {
   try {
+    // Check if email service is enabled
+    if (!EMAIL_ENABLED || !transporter) {
+      return res.status(503).json({
+        success: false,
+        message: 'Email service is currently unavailable. Please contact us directly at vgreenhotro@gmail.com',
+      });
+    }
+
     const { name, email, message } = req.body;
 
     // Validate input

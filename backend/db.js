@@ -6,21 +6,15 @@ const connectDB = async () => {
   try {
     // console.log("🔗 [Mongoose] Đang kết nối đến MongoDB...");
     // console.log(`🔗 [Mongoose] MongoDB URI: ${MONGODB_URI}`);
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // Increase timeout
-      socketTimeoutMS: 45000,
-    });
+    await mongoose.connect(MONGODB_URI);
     // console.log("✅ [Mongoose] Đã kết nối thành công đến MongoDB");
     // console.log(`✅ [Mongoose] Database: ${DATABASE_NAME}`);
     return mongoose.connection;
   } catch (error) {
     // console.error("❌ [Mongoose] Lỗi kết nối MongoDB:", error.message);
     // console.error("❌ [Mongoose] Hướng dẫn khắc phục:");
-    // console.error("1. Đảm bảo MongoDB đang chạy");
-    // console.error("2. Kiểm tra kết nối: mongodb://localhost:27017");
-    // console.error("3. Khởi động MongoDB service");
+    // console.error("1. Đảm bảo MONGO_URI environment variable được set");
+    // console.error("2. Kiểm tra MongoDB connection string");
     throw error; // Throw error instead of exiting
   }
 };

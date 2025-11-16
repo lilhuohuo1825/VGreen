@@ -38,8 +38,14 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// MongoDB connection string - Thay đổi theo cấu hình của bạn
-const MONGODB_URI = "mongodb://localhost:27017"; // Hoặc MongoDB Atlas URI
+// MongoDB connection string from environment variable
+const MONGODB_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error("❌ MONGO_URI environment variable is required!");
+  process.exit(1);
+}
+
 const DB_NAME = "vgreen"; // Changed to lowercase to match MongoDB case-sensitivity
 
 let db;
@@ -103,12 +109,7 @@ connectDB()
     // console.log(`   URI: ${MONGODB_URI}`);
     // console.log(`   Database: ${DB_NAME}\n`);
 
-    return MongoClient.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
-    });
+    return MongoClient.connect(MONGODB_URI);
   })
   .then((client) => {
     // console.log("✅ Connected to MongoDB successfully!");
@@ -436,7 +437,7 @@ connectDB()
     console.error("   1. Is MongoDB running?");
     console.error("      → Check: brew services list | grep mongodb");
     console.error("      → Start: brew services start mongodb-community");
-    console.error("   2. Is MongoDB accessible at mongodb://localhost:27017?");
+    console.error("   2. Is MONGO_URI environment variable set correctly?");
     console.error('      → Test: mongosh --eval "db.version()"');
     console.error('   3. Does database "vgreen" exist?');
     console.error("      → Check in MongoDB Compass");

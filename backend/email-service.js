@@ -5,25 +5,38 @@
 
 const nodemailer = require('nodemailer');
 
-// Email configuration
-const EMAIL_CONFIG = {
+// Email configuration from environment variables
+const EMAIL_USER = process.env.EMAIL_USER || 'vgreenhotro@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS;
+
+// Disable email if credentials are not provided
+const EMAIL_ENABLED = !!(EMAIL_USER && EMAIL_PASS);
+
+const EMAIL_CONFIG = EMAIL_ENABLED ? {
   service: 'gmail',
   host: 'smtp.gmail.com',
   port: 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: 'vgreenhotro@gmail.com',
-    pass: 'njrqbfixzhjtikbl' // Gmail App Password (16 ký tự không dấu cách)
+    user: EMAIL_USER,
+    pass: EMAIL_PASS
   },
   tls: {
     rejectUnauthorized: false
   }
-};
+} : null;
+
+if (!EMAIL_ENABLED) {
+  console.warn('⚠️  Email service is disabled. EMAIL_USER and EMAIL_PASS environment variables are required.');
+}
 
 /**
  * Tạo transporter để gửi email
  */
 const createTransporter = () => {
+  if (!EMAIL_ENABLED) {
+    throw new Error('Email service is disabled. Please set EMAIL_USER and EMAIL_PASS environment variables.');
+  }
   return nodemailer.createTransport(EMAIL_CONFIG);
 };
 
