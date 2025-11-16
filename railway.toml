@@ -1,0 +1,7 @@
+[build]
+command = "cd backend && npm install"
+
+[deploy]
+command = "cd backend && npm start"
+restartPolicy = "on_failure"
+

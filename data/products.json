@@ -124,7 +124,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/eLxDXJEGsxW6xsJqQVKmsnPfN9oMVuV8ei8nLoo1zwTV2G3Ox-91JVvu4USVfMnFNaIBvyCk52MBkGwuS7cWyp8UplCWLVwIig=rw"
 		],
-		"rating": 2.5,
+		"rating": 4.2,
 		"purchase_count": 3961,
 		"status": "Active",
 		"post_date": {
@@ -226,7 +226,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/8C_yotL0_n6WJj0LO0g1VqJahDsmQ_t74v2Q857lUiKBLoF8h7vw_Fr1f0ijgT9PHnysKSACTK983dsUMB4WreL4qD6Hfjw_DA=rw"
 		],
-		"rating": 3.9,
+		"rating": 4.1,
 		"purchase_count": 1276,
 		"status": "Active",
 		"post_date": {
@@ -1008,7 +1008,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/D_lJM0UfnhK5BwQXr4VFldoGRRgcFVzAxrZ27G8yJTurwWt821SObFIP5PUPSOoGJxp4t_f0SqB-Ay0zn80ZhFoVsge7d1qdew=rw"
 		],
-		"rating": 4,
+		"rating": 4.1,
 		"purchase_count": 2862,
 		"status": "Active",
 		"post_date": {
@@ -1754,7 +1754,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/mWTuW_5mSQwFGPPrlgK8VFEt8rXPgdq5GmZlDRnZ_O_n248YYc2oUUGStCaPZP0Br3ybbD5t-A7o0lJ_1CHafgI2kP4Vw3o=rw"
 		],
-		"rating": 3.7,
+		"rating": 4,
 		"purchase_count": 1500,
 		"status": "Active",
 		"post_date": {
@@ -9966,14 +9966,14 @@
 		"image": [
 			"https://lh3.googleusercontent.com/doa90TZ83qjqQDBMY5YZ4ySXUir0MdeOJ-OsmGqjzkols9Z2VOPfljdTRdsDPu1WLP0fzd2MbjrVnv9myakJnGqWkuh1sbH0=rw"
 		],
-		"rating": 0,
-		"purchase_count": 2075,
+		"rating": 5,
+		"purchase_count": 2074,
 		"status": "Active",
 		"post_date": {
 			"$date": "2025-01-05T03:25:23.433Z"
 		},
-		"liked": 2113,
-		"stock": 1,
+		"liked": 2112,
+		"stock": 16,
 		"__v": 1,
 		"groups": []
 	},
@@ -10271,13 +10271,13 @@
 			"https://lh3.googleusercontent.com/RpGjf_gN1pms5DpH6-tBuRzLRtcFRlqNC1yuODGX_SDvlb0uOVCpmUQJXgzly4dnZWKDmUzKU0BDhmq9ry_XqQNiJthpwa0=rw"
 		],
 		"rating": 5,
-		"purchase_count": 1322,
+		"purchase_count": 1319,
 		"status": "Active",
 		"post_date": {
 			"$date": "2024-02-19T06:45:01.039Z"
 		},
-		"liked": 1922,
-		"stock": 255,
+		"liked": 1921,
+		"stock": 264,
 		"__v": 1,
 		"groups": []
 	},
@@ -11932,8 +11932,8 @@
 		"post_date": {
 			"$date": "2025-03-01T01:25:58.399Z"
 		},
-		"liked": 3910,
-		"stock": 946,
+		"liked": 3909,
+		"stock": 947,
 		"__v": 1,
 		"groups": []
 	},
@@ -14880,7 +14880,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/IElIr1TJQmmaD0122yZXDNYiZ2DLtWjFUanu5-iUh4QmjH85tevsUTLgRIf-blbMbWAJ5yREswLiQeBNo7tJhLy7Aa6q_loM=rw"
 		],
-		"rating": 1.4,
+		"rating": 5,
 		"purchase_count": 1529,
 		"status": "Active",
 		"post_date": {
@@ -15492,7 +15492,7 @@
 		"image": [
 			"https://lh3.googleusercontent.com/jO6uTJhaiCnvv8gYjcgKj6ExhJPzErVpjO8b8HAbwNvrTYMhztleWQKbmkQeLoN7CUv2xIxCu2k-EPBh3kDDekFq734EAwEmDQ=rw"
 		],
-		"rating": 0,
+		"rating": 5,
 		"purchase_count": 2445,
 		"status": "Active",
 		"post_date": {
@@ -16480,7 +16480,7 @@
 		"post_date": {
 			"$date": "2024-08-05T07:59:08.584Z"
 		},
-		"liked": 139,
+		"liked": 138,
 		"stock": 813,
 		"__v": 1,
 		"groups": []
