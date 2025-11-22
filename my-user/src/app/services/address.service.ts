@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface AddressInfo {
   _id?: string;
@@ -27,7 +28,7 @@ export interface UserAddress {
   providedIn: 'root',
 })
 export class AddressService {
-  private apiUrl = 'http://localhost:3000/api/address';
+  private apiUrl = `${environment.apiUrl}/address`;
   private addressesSubject = new BehaviorSubject<AddressInfo[]>([]);
   public addresses$ = this.addressesSubject.asObservable();
   private currentCustomerID: string | null = null;
@@ -286,7 +287,7 @@ export class AddressService {
    * Load address tree data from MongoDB collection tree_complete
    */
   private loadAddressTree(): void {
-    this.http.get<any>('http://localhost:3000/api/tree_complete').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/tree_complete`).subscribe({
       next: (treeData: any) => {
         // tree_complete từ MongoDB là array chứa một object với structure: [{ tree: {...} }]
         // Hoặc có thể là array trực tiếp: [{...}]

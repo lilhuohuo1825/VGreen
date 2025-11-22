@@ -9,6 +9,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -187,7 +188,7 @@ export class SidebarCustomer implements OnInit, OnChanges, OnDestroy {
     private wishlistService: WishlistService,
     private returnBadgeService: ReturnBadgeService,
     private reviewBadgeService: ReviewBadgeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get current route and set active
@@ -352,7 +353,7 @@ export class SidebarCustomer implements OnInit, OnChanges, OnDestroy {
       // Load từ backend trước (MongoDB) - thêm timestamp để tránh cache
       // Sử dụng full URL để đảm bảo request đến đúng backend server
       const timestamp = new Date().getTime();
-      const apiUrl = `http://localhost:3000/api/auth/user/${customerID}?t=${timestamp}`;
+      const apiUrl = `${environment.apiUrl}/auth/user/${customerID}?t=${timestamp}`;
       console.log(`\n🔄 [Sidebar] Loading user profile for CustomerID: ${customerID}`);
       console.log(`📡 [Sidebar] API URL: ${apiUrl}`);
       this.http.get<any>(apiUrl).subscribe({
@@ -480,8 +481,8 @@ export class SidebarCustomer implements OnInit, OnChanges, OnDestroy {
       user.TotalSpent !== undefined && user.TotalSpent !== null
         ? Number(user.TotalSpent)
         : user.totalSpent !== undefined && user.totalSpent !== null
-        ? Number(user.totalSpent)
-        : 0;
+          ? Number(user.totalSpent)
+          : 0;
     const customerTiering =
       user.CustomerTiering || user.CustomerType || user.customer_type || 'Đồng';
 
@@ -501,8 +502,8 @@ export class SidebarCustomer implements OnInit, OnChanges, OnDestroy {
       memberSince:
         user.RegisterDate || user.register_date || user.createdAt
           ? new Date(user.RegisterDate || user.register_date || user.createdAt)
-              .getFullYear()
-              .toString()
+            .getFullYear()
+            .toString()
           : '2024',
     };
 

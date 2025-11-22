@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { startWith, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Notification {
   _id?: string;
@@ -26,13 +27,13 @@ export interface Notification {
   providedIn: 'root'
 })
 export class NotificationService {
-  private apiUrl = 'http://localhost:3000/api/notifications';
+  private apiUrl = `${environment.apiUrl}/notifications`;
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$: Observable<number> = this.unreadCountSubject.asObservable();
-  
+
   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$: Observable<Notification[]> = this.notificationsSubject.asObservable();
-  
+
   private customerId: string | null = null;
   private pollingInterval = 30000; // 30 seconds
 

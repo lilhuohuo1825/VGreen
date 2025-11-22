@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 interface SupportItem {
   id: number;
@@ -234,7 +235,7 @@ export class Support implements OnInit {
     message: '',
   };
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // Scroll to top khi component load
@@ -317,7 +318,7 @@ export class Support implements OnInit {
 
     // Gửi email qua API
     this.http
-      .post<any>('http://localhost:3000/api/contact/send', {
+      .post<any>(`${environment.apiUrl}/contact/send`, {
         name: this.contactData.name,
         email: this.contactData.email,
         message: this.contactData.message,

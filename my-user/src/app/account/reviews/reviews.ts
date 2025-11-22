@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { OrderDetailModalService } from '../../services/order-detail-modal.service';
 import { OrderDetailModal } from '../order-detail-modal/order-detail-modal.js';
+import { environment } from '../../../environments/environment';
 
 interface ProductInfo {
   id: string;
@@ -86,7 +87,7 @@ export class ReviewsComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private orderService: OrderService,
     private orderDetailModalService: OrderDetailModalService
-  ) {}
+  ) { }
 
   // Review modal state
   showReviewModal: boolean = false;
@@ -371,7 +372,7 @@ export class ReviewsComponent implements OnInit, OnDestroy {
 
       // Gọi API để lưu review
       return this.http
-        .post(`http://localhost:3000/api/reviews/${sku}`, reviewData)
+        .post(`${environment.apiUrl}/reviews/${sku}`, reviewData)
         .toPromise()
         .then((response: any) => {
           console.log(` Review submitted successfully for SKU: ${sku}`, response);
@@ -408,13 +409,13 @@ export class ReviewsComponent implements OnInit, OnDestroy {
             reviewImages =
               imagesFromResponse && Array.isArray(imagesFromResponse)
                 ? imagesFromResponse.filter(
-                    (img): img is string =>
-                      img !== null && img !== undefined && typeof img === 'string'
-                  )
+                  (img): img is string =>
+                    img !== null && img !== undefined && typeof img === 'string'
+                )
                 : (product.images || []).filter(
-                    (img): img is string =>
-                      img !== null && img !== undefined && typeof img === 'string'
-                  );
+                  (img): img is string =>
+                    img !== null && img !== undefined && typeof img === 'string'
+                );
           } else {
             reviewImages = (product.images || []).filter(
               (img): img is string => img !== null && img !== undefined && typeof img === 'string'
@@ -487,8 +488,7 @@ export class ReviewsComponent implements OnInit, OnDestroy {
         if (failCount > 0) {
           console.warn(` ${failCount} reviews failed to submit`);
           this.toastService.show(
-            `Đã gửi ${successCount} đánh giá thành công. ${
-              failCount > 0 ? `${failCount} đánh giá gặp lỗi.` : ''
+            `Đã gửi ${successCount} đánh giá thành công. ${failCount > 0 ? `${failCount} đánh giá gặp lỗi.` : ''
             }`,
             'error'
           );
@@ -721,7 +721,7 @@ export class ReviewsComponent implements OnInit, OnDestroy {
       skuOrderMap.forEach((orderProducts, sku) => {
         reviewPromises.push(
           this.http
-            .get<any>(`http://localhost:3000/api/reviews/${sku}`)
+            .get<any>(`${environment.apiUrl}/reviews/${sku}`)
             .toPromise()
             .then((response) => {
               if (response.success && response.data && response.data.reviews) {
@@ -1060,7 +1060,7 @@ export class ReviewsComponent implements OnInit, OnDestroy {
 
   // Load promotions and targets for buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     forkJoin({
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),

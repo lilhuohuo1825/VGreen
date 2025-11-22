@@ -20,6 +20,7 @@ import { AuthService } from '../../services/auth.service';
 import { ProductService } from '../../services/product.service';
 import { AuthPopupService } from '../../services/auth-popup.service';
 import { ToastService } from '../../services/toast.service';
+import { environment } from '../../../environments/environment';
 
 interface Product {
   _id: string;
@@ -175,7 +176,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
   likingReviews: Set<string> = new Set(); // Track reviews being liked (to prevent double-click)
   replyingReviews: Set<string> = new Set(); // Track reviews being replied to
 
-  private apiUrl = '/api';
+  private apiUrl = environment.apiUrl;
   private activePromotions: any[] = [];
   private promotionTargets: any[] = [];
 
@@ -190,7 +191,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
     private authPopupService: AuthPopupService,
     private toastService: ToastService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Reset dropdown to default when component initializes
@@ -608,10 +609,8 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
           this.relatedProducts = relatedProductsList;
           console.log(
-            ` Found ${this.relatedProducts.length} related products (${
-              sameSubcategoryProducts.length
-            } same subcategory, ${
-              this.relatedProducts.length - sameSubcategoryProducts.length
+            ` Found ${this.relatedProducts.length} related products (${sameSubcategoryProducts.length
+            } same subcategory, ${this.relatedProducts.length - sameSubcategoryProducts.length
             } same category)`
           );
 
@@ -638,7 +637,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
     // Load reviews for all related products in parallel
     const reviewRequests = this.relatedProducts.map((product) =>
-      this.http.get<any>(`http://localhost:3000/api/reviews/${product.sku}`)
+      this.http.get<any>(`${environment.apiUrl}/reviews/${product.sku}`)
     );
 
     forkJoin(reviewRequests).subscribe({
@@ -1047,7 +1046,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
     console.log(` Loading reviews for SKU: ${this.product.sku}`);
 
-    this.http.get<any>(`http://localhost:3000/api/reviews/${this.product.sku}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/reviews/${this.product.sku}`).subscribe({
       next: (response) => {
         if (response.success && response.data && response.data.reviews) {
           // Map backend reviews to frontend format với likes và replies
@@ -1397,7 +1396,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
     this.http
       .put<any>(
-        `http://localhost:3000/api/reviews/${this.product.sku}/like/${review.reviewIndex}`,
+        `${environment.apiUrl}/reviews/${this.product.sku}/like/${review.reviewIndex}`,
         {
           customer_id: customerId,
           action: action,
@@ -1479,7 +1478,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
     this.http
       .post<any>(
-        `http://localhost:3000/api/reviews/${this.product.sku}/reply/${review.reviewIndex}`,
+        `${environment.apiUrl}/reviews/${this.product.sku}/reply/${review.reviewIndex}`,
         {
           fullname: fullname,
           customer_id: customerId,
@@ -1527,7 +1526,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
     this.http
       .put<any>(
-        `http://localhost:3000/api/reviews/${this.product.sku}/reply/${review.reviewIndex}/${replyIndex}/like`,
+        `${environment.apiUrl}/reviews/${this.product.sku}/reply/${review.reviewIndex}/${replyIndex}/like`,
         {
           customer_id: customerId,
           action: action,
@@ -1608,7 +1607,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
     }
 
     this.isLoadingConsultations = true;
-    this.http.get<any>(`http://localhost:3000/api/consultations/${this.product.sku}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/consultations/${this.product.sku}`).subscribe({
       next: (response) => {
         if (response.success && response.data && response.data.questions) {
           // Map backend questions to frontend format
@@ -1683,7 +1682,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
     this.isSubmittingQuestion = true;
 
     this.http
-      .post<any>(`http://localhost:3000/api/consultations/${this.product.sku}/question`, {
+      .post<any>(`${environment.apiUrl}/consultations/${this.product.sku}/question`, {
         question: this.newQuestion.trim(),
         customerId: customerId,
         customerName: customerName,
@@ -1751,7 +1750,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
     // 1. Load instructions khớp với product name
     this.http
       .get<{ success: boolean; data: any[]; count: number }>(
-        `http://localhost:3000/api/instructions/match-product?productName=${encodeURIComponent(
+        `${environment.apiUrl}/instructions/match-product?productName=${encodeURIComponent(
           product.ProductName
         )}`
       )
@@ -1788,7 +1787,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
           // 3. Load dishes theo batch
           this.http
             .post<{ success: boolean; data: any[]; count: number }>(
-              'http://localhost:3000/api/dishes/batch',
+              `${environment.apiUrl}/dishes/batch`,
               { ids: instructionIds }
             )
             .subscribe({

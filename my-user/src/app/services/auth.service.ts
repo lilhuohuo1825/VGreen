@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: string;
@@ -84,7 +85,7 @@ export interface ChangePasswordResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:3000/api/auth';
+  private readonly API_URL = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -195,7 +196,7 @@ export class AuthService {
     console.log(' [AuthService] Updating user info:', updateData);
 
     return this.http
-      .put<UpdateUserInfoResponse>('http://localhost:3000/api/auth/user/update', updateData)
+      .put<UpdateUserInfoResponse>(`${this.API_URL}/user/update`, updateData)
       .pipe(
         tap((response) => {
           if (response.success && response.data) {
@@ -246,7 +247,7 @@ export class AuthService {
     console.log(' [AuthService] Changing password for customer:', data.customerID);
 
     return this.http
-      .post<ChangePasswordResponse>('http://localhost:3000/api/auth/change-password', data)
+      .post<ChangePasswordResponse>(`${this.API_URL}/change-password`, data)
       .pipe(
         tap((response) => {
           if (response.success) {

@@ -10,6 +10,7 @@ import { ToastService } from '../../services/toast.service';
 import { OrderService } from '../../services/order.service';
 import { OrderDetailModalService } from '../../services/order-detail-modal.service';
 import { OrderDetailModal } from '../order-detail-modal/order-detail-modal.js';
+import { environment } from '../../../environments/environment';
 
 interface ReturnItem {
   id: string;
@@ -112,7 +113,7 @@ export class ReturnManagementComponent implements OnInit, OnDestroy, AfterViewIn
     private toastService: ToastService,
     private orderService: OrderService,
     private orderDetailModalService: OrderDetailModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Load returns to sync with orders (don't clear data to preserve changes)
@@ -437,8 +438,8 @@ export class ReturnManagementComponent implements OnInit, OnDestroy, AfterViewIn
       orderDate instanceof Date
         ? orderDate.toISOString()
         : typeof orderDate === 'string'
-        ? orderDate
-        : new Date().toISOString();
+          ? orderDate
+          : new Date().toISOString();
 
     // Ensure status is correctly mapped - normalize status values
     let normalizedStatus = backendOrder.status || 'processing_return';
@@ -803,7 +804,7 @@ export class ReturnManagementComponent implements OnInit, OnDestroy, AfterViewIn
 
   // Load promotions and targets for buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     forkJoin({
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),

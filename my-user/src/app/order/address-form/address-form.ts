@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { ScrollLockService } from '../../services/scroll-lock.service';
 import { AuthService } from '../../services/auth.service';
 import { AddressService } from '../../services/address.service';
@@ -90,7 +91,7 @@ export class AddressFormComponent implements OnInit, OnChanges, OnDestroy {
     private authService: AuthService,
     private addressService: AddressService,
     private http: HttpClient
-  ) {}
+  ) { }
 
   // Mapping between provinces.json codes and tree_complete.json codes
   // Some provinces have different codes in the two files
@@ -145,7 +146,7 @@ export class AddressFormComponent implements OnInit, OnChanges, OnDestroy {
     console.log('🔄 Loading address data from MongoDB tree_complete collection (63 tỉnh thành)...');
 
     // Load tree data from MongoDB API
-    this.http.get<any>('http://localhost:3000/api/tree_complete').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/tree_complete`).subscribe({
       next: (treeData: any) => {
         console.log('✅ Loaded tree_complete from MongoDB API');
         console.log(

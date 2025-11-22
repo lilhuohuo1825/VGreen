@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface WishlistItem {
   sku: string;
@@ -19,26 +20,26 @@ export interface UserWishlist {
   providedIn: 'root',
 })
 export class WishlistService {
-  private apiUrl = 'http://localhost:3000/api/wishlist';
+  private apiUrl = `${environment.apiUrl}/wishlist`;
   private wishlistSubject = new BehaviorSubject<WishlistItem[]>([]);
   public wishlist$ = this.wishlistSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
- // Lấy wishlist của user từ server
+  // Lấy wishlist của user từ server
   getWishlist(customerID: string): Observable<UserWishlist> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for getWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for getWishlist:', customerID);
       return of({ CustomerID: '', wishlist: [] });
     }
 
- console.log(' [WishlistService] Getting wishlist for customerID:', customerID);
+    console.log(' [WishlistService] Getting wishlist for customerID:', customerID);
 
     return this.http.get<any>(`${this.apiUrl}/${customerID}`).pipe(
       map((response) => {
         if (response.success) {
           this.wishlistSubject.next(response.data.wishlist || []);
- console.log(
+          console.log(
             ' [WishlistService] Got wishlist:',
             response.data.wishlist?.length || 0,
             'items'
@@ -48,21 +49,21 @@ export class WishlistService {
         return { CustomerID: customerID, wishlist: [] };
       }),
       catchError((error) => {
- console.error(' [WishlistService] Error getting wishlist:', error);
+        console.error(' [WishlistService] Error getting wishlist:', error);
         return of({ CustomerID: customerID, wishlist: [] });
       })
     );
   }
 
- // Thêm sản phẩm vào wishlist
+  // Thêm sản phẩm vào wishlist
   addToWishlist(customerID: string, sku: string, productName: string): Observable<boolean> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for addToWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for addToWishlist:', customerID);
       return of(false);
     }
 
     if (!sku || sku.trim() === '') {
- console.error(' [WishlistService] Invalid SKU for addToWishlist:', sku);
+      console.error(' [WishlistService] Invalid SKU for addToWishlist:', sku);
       return of(false);
     }
 
@@ -71,29 +72,29 @@ export class WishlistService {
       product_name: productName,
     };
 
- console.log(' [WishlistService] Adding to wishlist:', { customerID, sku, productName });
- console.log(' [WishlistService] Request body:', JSON.stringify(requestBody));
+    console.log(' [WishlistService] Adding to wishlist:', { customerID, sku, productName });
+    console.log(' [WishlistService] Request body:', JSON.stringify(requestBody));
 
     return this.http.post<any>(`${this.apiUrl}/${customerID}/add`, requestBody).pipe(
       map((response) => {
         if (response.success) {
           this.wishlistSubject.next(response.data.wishlist || []);
- console.log(' [WishlistService] Added to wishlist successfully');
+          console.log(' [WishlistService] Added to wishlist successfully');
           return true;
         }
         return false;
       }),
       catchError((error) => {
- console.error(' [WishlistService] Error adding to wishlist:', error);
+        console.error(' [WishlistService] Error adding to wishlist:', error);
         return of(false);
       })
     );
   }
 
- // Xóa sản phẩm khỏi wishlist
+  // Xóa sản phẩm khỏi wishlist
   removeFromWishlist(customerID: string, sku: string): Observable<boolean> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for removeFromWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for removeFromWishlist:', customerID);
       return of(false);
     }
 
@@ -106,16 +107,16 @@ export class WishlistService {
         return false;
       }),
       catchError((error) => {
- console.error('Lỗi khi xóa khỏi wishlist:', error);
+        console.error('Lỗi khi xóa khỏi wishlist:', error);
         return of(false);
       })
     );
   }
 
- // Kiểm tra sản phẩm có trong wishlist không
+  // Kiểm tra sản phẩm có trong wishlist không
   isInWishlist(customerID: string, sku: string): Observable<boolean> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for isInWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for isInWishlist:', customerID);
       return of(false);
     }
 
@@ -124,20 +125,20 @@ export class WishlistService {
         return response.success && response.data && response.data.isInWishlist;
       }),
       catchError((error) => {
- console.error('Lỗi khi kiểm tra wishlist:', error);
+        console.error('Lỗi khi kiểm tra wishlist:', error);
         return of(false);
       })
     );
   }
 
- // Toggle wishlist (thêm hoặc xóa)
+  // Toggle wishlist (thêm hoặc xóa)
   toggleWishlist(customerID: string, sku: string, productName: string): Observable<boolean> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for toggleWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for toggleWishlist:', customerID);
       return of(false);
     }
 
- console.log(' [WishlistService] Toggle wishlist:', { customerID, sku, productName });
+    console.log(' [WishlistService] Toggle wishlist:', { customerID, sku, productName });
 
     return this.isInWishlist(customerID, sku).pipe(
       map((isInWishlist) => {
@@ -150,16 +151,16 @@ export class WishlistService {
         }
       }),
       catchError((error) => {
- console.error(' [WishlistService] Toggle error:', error);
+        console.error(' [WishlistService] Toggle error:', error);
         return of(false);
       })
     );
   }
 
- // Xóa toàn bộ wishlist
+  // Xóa toàn bộ wishlist
   clearWishlist(customerID: string): Observable<boolean> {
     if (!customerID || customerID.trim() === '') {
- console.error(' [WishlistService] Invalid customerID for clearWishlist:', customerID);
+      console.error(' [WishlistService] Invalid customerID for clearWishlist:', customerID);
       return of(false);
     }
 
@@ -172,18 +173,18 @@ export class WishlistService {
         return false;
       }),
       catchError((error) => {
- console.error('Lỗi khi xóa wishlist:', error);
+        console.error('Lỗi khi xóa wishlist:', error);
         return of(false);
       })
     );
   }
 
- // Lấy wishlist hiện tại (từ BehaviorSubject)
+  // Lấy wishlist hiện tại (từ BehaviorSubject)
   getCurrentWishlist(): WishlistItem[] {
     return this.wishlistSubject.value;
   }
 
- // Đếm số lượng sản phẩm trong wishlist
+  // Đếm số lượng sản phẩm trong wishlist
   getWishlistCount(): number {
     return this.wishlistSubject.value.length;
   }

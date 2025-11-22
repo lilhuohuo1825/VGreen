@@ -9,6 +9,7 @@ import { WishlistService } from '../../services/wishlist.service';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthPopupService } from '../../services/auth-popup.service';
+import { environment } from '../../../environments/environment';
 
 // Interfaces - Khớp với MongoDB schema
 interface BlogPost {
@@ -91,7 +92,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
     private cartService: CartService,
     private toastService: ToastService,
     private authPopupService: AuthPopupService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadBlogData();
@@ -231,13 +232,13 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
     try {
       console.log(
         ' [BlogDetail] Fetching blog post from API:',
-        `http://localhost:3000/api/blogs/${normalizedPostId}`
+        `${environment.apiUrl}/blogs/${normalizedPostId}`
       );
 
       // Load blog post từ backend API
       const response = await this.http
         .get<{ success: boolean; data: BlogPost }>(
-          `http://localhost:3000/api/blogs/${normalizedPostId}`
+          `${environment.apiUrl}/blogs/${normalizedPostId}`
         )
         .toPromise();
 
@@ -259,7 +260,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
         // Load all blogs để tìm prev/next posts
         try {
           const allBlogsResponse = await this.http
-            .get<{ success: boolean; data: BlogPost[] }>('http://localhost:3000/api/blogs')
+            .get<{ success: boolean; data: BlogPost[] }>(`${environment.apiUrl}/blogs`)
             .toPromise();
 
           if (allBlogsResponse && allBlogsResponse.success && allBlogsResponse.data) {
@@ -387,7 +388,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const normalizedPostId = this.currentPost.id.trim().replace(/,$/, '').trim();
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
 
     // Call new API endpoint to get related products based on blog content keywords
     this.http
@@ -936,7 +937,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
       if (!sku) return;
 
       // Load reviews count from API
-      this.http.get<any>(`http://localhost:3000/api/reviews/${sku}`).subscribe({
+      this.http.get<any>(`${environment.apiUrl}/reviews/${sku}`).subscribe({
         next: (response) => {
           if (response.success && response.data && response.data.reviews) {
             product.ReviewCount = response.data.reviews.length;

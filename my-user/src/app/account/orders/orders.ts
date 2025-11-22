@@ -25,6 +25,7 @@ import { CartService } from '../../services/cart.service';
 import { AddressService } from '../../services/address.service';
 import { OrderDetailModal } from '../order-detail-modal/order-detail-modal.js';
 import { OrderDetailModalService } from '../../services/order-detail-modal.service';
+import { environment } from '../../../environments/environment';
 interface ShippingAddress {
   detail?: string;
   ward?: string;
@@ -160,7 +161,7 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private addressService: AddressService,
     private orderDetailModalService: OrderDetailModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Scroll to top when entering the page
@@ -1456,7 +1457,7 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Gọi API để lưu review
       return this.http
-        .post(`http://localhost:3000/api/reviews/${sku}`, reviewData)
+        .post(`${environment.apiUrl}/reviews/${sku}`, reviewData)
         .toPromise()
         .then((response: any) => {
           // console.log(` Review submitted successfully for SKU: ${sku}`, response);
@@ -1522,13 +1523,13 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
               reviewImages =
                 imagesFromResponse && Array.isArray(imagesFromResponse)
                   ? imagesFromResponse.filter(
-                      (img): img is string =>
-                        img !== null && img !== undefined && typeof img === 'string'
-                    )
+                    (img): img is string =>
+                      img !== null && img !== undefined && typeof img === 'string'
+                  )
                   : (product.images || []).filter(
-                      (img): img is string =>
-                        img !== null && img !== undefined && typeof img === 'string'
-                    );
+                    (img): img is string =>
+                      img !== null && img !== undefined && typeof img === 'string'
+                  );
             } else {
               reviewImages = (product.images || []).filter(
                 (img): img is string => img !== null && img !== undefined && typeof img === 'string'
@@ -1652,8 +1653,7 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
               // console.log(' [Orders] Showing success toast');
               if (failCount > 0) {
                 this.toastService.show(
-                  `Đã gửi ${successCount} đánh giá thành công. ${
-                    failCount > 0 ? `${failCount} đánh giá gặp lỗi.` : ''
+                  `Đã gửi ${successCount} đánh giá thành công. ${failCount > 0 ? `${failCount} đánh giá gặp lỗi.` : ''
                   }`,
                   'error',
                   100000 // Z-index cao hơn modal
@@ -2142,7 +2142,7 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadReviewedOrders(): void {
     // Load tất cả reviews từ backend để check order nào đã được review đầy đủ
-    this.http.get<any>('http://localhost:3000/api/reviews/').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/reviews/`).subscribe({
       next: (response) => {
         if (response.success && response.data && Array.isArray(response.data)) {
           this.reviewedOrderIds.clear();
@@ -2230,7 +2230,7 @@ export class OrdersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Load promotions and targets for buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     forkJoin({
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),

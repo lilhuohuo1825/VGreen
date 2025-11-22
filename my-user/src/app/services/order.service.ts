@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // ========== INTERFACES ==========
 export interface OrderItem {
@@ -63,17 +64,17 @@ export interface CreateOrderRequest {
 export interface Order extends CreateOrderRequest {
   OrderID: string;
   status:
-    | 'pending'
-    | 'confirmed'
-    // | 'processing'        // Đang xử lý - Đã comment
-    | 'shipping'
-    | 'delivered'
-    | 'received' // Đã nhận hàng (user xác nhận hoặc tự động sau 24h)
-    | 'completed'
-    | 'cancelled'
-    | 'processing_return'
-    | 'returning'
-    | 'returned';
+  | 'pending'
+  | 'confirmed'
+  // | 'processing'        // Đang xử lý - Đã comment
+  | 'shipping'
+  | 'delivered'
+  | 'received' // Đã nhận hàng (user xác nhận hoặc tự động sau 24h)
+  | 'completed'
+  | 'cancelled'
+  | 'processing_return'
+  | 'returning'
+  | 'returned';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -90,9 +91,9 @@ export interface ApiResponse<T> {
   providedIn: 'root',
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:3000/api/orders';
+  private apiUrl = `${environment.apiUrl}/orders`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Tạo đơn hàng mới

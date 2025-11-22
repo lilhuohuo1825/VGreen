@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { ToastService } from './toast.service';
+import { environment } from '../../environments/environment';
 
 interface CartItem {
   sku: string;
@@ -38,7 +39,7 @@ interface Cart {
 export class CartService {
   private http = inject(HttpClient);
   private toastService = inject(ToastService);
-  private apiUrl = '/api/cart'; // Use proxy configuration
+  private apiUrl = `${environment.apiUrl}/cart`;
 
   private isOpen = signal(false);
   private cartItems = signal<any[]>([]);
@@ -789,7 +790,7 @@ export class CartService {
 
   // Load promotions và targets để check buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     this.http
       .get<any>(`${apiUrl}/promotions`)
       .pipe(
@@ -880,8 +881,7 @@ export class CartService {
     });
 
     console.log(
-      `[CartService] Expanded items count: ${expandedItems.length}, purchased: ${
-        expandedItems.filter((i) => i.itemType === 'purchased').length
+      `[CartService] Expanded items count: ${expandedItems.length}, purchased: ${expandedItems.filter((i) => i.itemType === 'purchased').length
       }, gifted: ${expandedItems.filter((i) => i.itemType === 'gifted').length}`
     );
     return expandedItems;

@@ -8,6 +8,7 @@ import { CartService } from '../services/cart.service';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { AuthPopupService } from '../services/auth-popup.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -48,7 +49,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
     'rong-bien': 'rong-bien',
   };
 
-  private apiUrl = '/api'; // Use proxy configuration
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private router: Router,
@@ -57,7 +58,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
     public cartService: CartService,
     private http: HttpClient,
     private authPopupService: AuthPopupService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Component initialized
@@ -585,7 +586,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   // Force reload blog data từ backend API
   private async forceReloadBlogData(): Promise<void> {
     try {
-      const response = await fetch('http://localhost:3000/api/blogs');
+      const response = await fetch(`${this.apiUrl}/blogs`);
       if (!response.ok) {
         throw new Error('Không thể tải dữ liệu blog từ backend');
       }
@@ -1428,7 +1429,7 @@ let blogData: BlogPost[] = [];
 // Load data từ backend API
 async function loadBlogData(): Promise<void> {
   try {
-    const response = await fetch('http://localhost:3000/api/blogs');
+    const response = await fetch(`${environment.apiUrl}/blogs`);
     if (!response.ok) {
       throw new Error('Không thể tải dữ liệu blog từ backend');
     }

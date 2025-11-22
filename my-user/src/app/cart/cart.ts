@@ -24,6 +24,7 @@ import {
 import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Product {
   SKU: number;
@@ -117,7 +118,7 @@ export class CartComponent implements OnInit, OnDestroy, OnChanges {
     private cartService: CartService,
     private productService: ProductService,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Component giờ nhận data từ parent, không cần load từ localStorage
@@ -450,7 +451,7 @@ export class CartComponent implements OnInit, OnDestroy, OnChanges {
 
   // Load promotions và targets để check buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     forkJoin({
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),

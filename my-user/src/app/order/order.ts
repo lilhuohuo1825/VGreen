@@ -21,6 +21,7 @@ import { CartService } from '../services/cart.service';
 import { AddressService, AddressInfo as ServiceAddressInfo } from '../services/address.service';
 import { OrderService, CreateOrderRequest, OrderItem } from '../services/order.service';
 import { ToastService } from '../services/toast.service';
+import { environment } from '../../environments/environment';
 
 export interface CartItem {
   id: number;
@@ -135,7 +136,7 @@ export class OrderComponent implements OnInit, AfterViewInit, OnDestroy {
     private orderService: OrderService,
     private http: HttpClient,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Force reload CustomerID từ localStorage trước
@@ -1204,7 +1205,7 @@ export class OrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Load promotions và targets để check buy1get1
   private loadPromotionsAndTargets(): void {
-    const apiUrl = 'http://localhost:3000/api';
+    const apiUrl = environment.apiUrl;
     forkJoin({
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),
