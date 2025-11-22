@@ -521,7 +521,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
 
     // Load products, promotions, and targets in parallel
     forkJoin({
-      products: this.productService.getAllProducts(),
+      products: this.productService.getAllProductsNoPagination(),
       promotions: this.http.get<any>(`${apiUrl}/promotions`),
       targets: this.http.get<any>(`${apiUrl}/promotion-targets`),
     }).subscribe({
@@ -632,7 +632,7 @@ export class BlogDetail implements OnInit, OnDestroy, AfterViewInit {
 
   // Old method - kept for reference but not used
   private loadRelatedProductsWithoutPromotions(categoryTag: string): void {
-    this.productService.getAllProducts().subscribe({
+    this.productService.getAllProductsNoPagination().subscribe({
       next: (products) => {
         this.relatedProducts = products
           .filter((product) => {

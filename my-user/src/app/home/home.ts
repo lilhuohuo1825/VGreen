@@ -126,7 +126,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   private loadProducts(): void {
     // Load products, promotions, and targets in parallel
     forkJoin({
-      products: this.productService.getAllProducts(),
+      products: this.productService.getAllProductsNoPagination(),
       promotions: this.http.get<any>(`${this.apiUrl}/promotions`), // Lấy TẤT CẢ promotions
       targets: this.http.get<any>(`${this.apiUrl}/promotion-targets`),
     }).subscribe({
@@ -189,7 +189,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadProductsWithoutPromotions(): void {
-    this.productService.getAllProducts().subscribe({
+    this.productService.getAllProductsNoPagination().subscribe({
       next: (products) => {
         this.hotDealsProducts = products
           .sort((a, b) => (b.purchase_count || 0) - (a.purchase_count || 0))

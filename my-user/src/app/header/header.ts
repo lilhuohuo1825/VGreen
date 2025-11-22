@@ -885,7 +885,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Load all products for search functionality
   loadAllProducts(): void {
     this.isLoadingProducts = true;
-    this.productService.getAllProducts().subscribe({
+    this.productService.getAllProductsNoPagination().subscribe({
       next: (products) => {
         this.allProducts = products;
         this.isLoadingProducts = false;

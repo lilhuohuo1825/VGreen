@@ -520,7 +520,7 @@ export class ProductDetailComponent implements OnInit, AfterViewInit, AfterViewC
 
   loadRelatedProducts(): void {
     console.log(' Loading related products from MongoDB API');
-    this.productService.getAllProducts().subscribe({
+    this.productService.getAllProductsNoPagination().subscribe({
       next: (data) => {
         if (this.product) {
           // Apply promotions to all products first

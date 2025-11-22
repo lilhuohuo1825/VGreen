@@ -111,7 +111,7 @@ export class Wishlist implements OnInit, OnDestroy {
 
  // Fetch all products with promotions
     forkJoin({
-      products: this.productService.getAllProducts(),
+      products: this.productService.getAllProductsNoPagination(),
       promotions: this.http.get<any>(`${this.apiUrl}/promotions`),
       targets: this.http.get<any>(`${this.apiUrl}/promotion-targets`),
     }).subscribe({

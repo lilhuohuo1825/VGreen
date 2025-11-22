@@ -468,7 +468,7 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Load products, promotions, and targets in parallel
     forkJoin({
-      products: this.productService.getAllProducts(),
+      products: this.productService.getAllProductsNoPagination(),
       promotions: this.http.get<any>(`${this.apiUrl}/promotions`),
       targets: this.http.get<any>(`${this.apiUrl}/promotion-targets`),
     }).subscribe({
