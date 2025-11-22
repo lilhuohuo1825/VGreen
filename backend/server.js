@@ -37,17 +37,25 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 const allowedOrigins = [
   "http://localhost:4200",
-  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [])
+  "http://localhost:4201", // Admin local
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()) : [])
 ];
+
+console.log('🔒 CORS allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
+
+    // Check if origin is allowed
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Log rejected origin for debugging
+      console.log('⚠️ CORS rejected origin:', origin);
+      // Return false instead of error to avoid 500
+      callback(null, false);
     }
   },
   credentials: true
