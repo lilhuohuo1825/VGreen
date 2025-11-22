@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 
@@ -91,7 +92,7 @@ export class ConsultationDetail implements OnInit, OnDestroy {
   loadConsultation(): void {
     this.loadError = '';
     
-    this.http.get<any>(`http://localhost:3000/api/consultations/${this.sku}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/consultations/${this.sku}`).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.consultation = response.data;
@@ -239,7 +240,7 @@ export class ConsultationDetail implements OnInit, OnDestroy {
     const adminName = 'Admin'; // TODO: Get from auth service
 
     this.http.post<any>(
-      `http://localhost:3000/api/consultations/${this.consultation.sku}/answer/${this.selectedQuestion._id}`,
+      `${environment.apiUrl}/consultations/${this.consultation.sku}/answer/${this.selectedQuestion._id}`,
       {
         answer: this.answerText.trim(),
         answeredBy: adminName
@@ -272,7 +273,7 @@ export class ConsultationDetail implements OnInit, OnDestroy {
     }
 
     this.http.delete<any>(
-      `http://localhost:3000/api/consultations/${this.consultation.sku}/question/${question._id}`
+      `${environment.apiUrl}/consultations/${this.consultation.sku}/question/${question._id}`
     ).subscribe({
       next: (response) => {
         if (response.success) {

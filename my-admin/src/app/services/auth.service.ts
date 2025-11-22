@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, catchError, timeout } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface AdminUser {
   id: number;
@@ -15,7 +16,7 @@ export interface AdminUser {
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = environment.apiUrl;
   
   // Signal để track trạng thái đăng nhập
   isAuthenticated = signal<boolean>(false);

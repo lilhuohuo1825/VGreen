@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { ApiService } from '../services/api.service';
 import { NotificationService } from '../services/notification.service';
 import { forkJoin } from 'rxjs';
@@ -200,7 +201,7 @@ export class PromotionManage implements OnInit {
     this.isLoadingTargets = true;
     
     // Load categories
-    this.http.get<any>('http://localhost:3000/api/products/metadata/categories').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/products/metadata/categories`).subscribe({
       next: (response) => {
         if (response.success) {
           this.availableCategories = response.data || [];
@@ -212,7 +213,7 @@ export class PromotionManage implements OnInit {
     });
     
     // Load subcategories
-    this.http.get<any>('http://localhost:3000/api/products/metadata/subcategories').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/products/metadata/subcategories`).subscribe({
       next: (response) => {
         if (response.success) {
           this.availableSubcategories = response.data || [];
@@ -224,7 +225,7 @@ export class PromotionManage implements OnInit {
     });
     
     // Load brands
-    this.http.get<any>('http://localhost:3000/api/products/metadata/brands').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/products/metadata/brands`).subscribe({
       next: (response) => {
         if (response.success) {
           this.availableBrands = response.data || [];
@@ -236,7 +237,7 @@ export class PromotionManage implements OnInit {
     });
     
     // Load products
-    this.http.get<any>('http://localhost:3000/api/products/metadata/products').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/products/metadata/products`).subscribe({
       next: (response) => {
         if (response.success) {
           this.availableProducts = response.data || [];
@@ -404,7 +405,7 @@ export class PromotionManage implements OnInit {
    * Load promotion target for editing
    */
   loadPromotionTarget(promotionId: string): void {
-    this.http.get<any>(`http://localhost:3000/api/promotion-targets/${promotionId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/promotion-targets/${promotionId}`).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const targetData = response.data;
@@ -487,7 +488,7 @@ export class PromotionManage implements OnInit {
    * Load promotion target for detail modal
    */
   loadDetailPromotionTarget(promotionId: string): void {
-    this.http.get<any>(`http://localhost:3000/api/promotion-targets/${promotionId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/promotion-targets/${promotionId}`).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const targetData = response.data;
@@ -1091,7 +1092,7 @@ export class PromotionManage implements OnInit {
         const update = updates[updateIndex];
         console.log(`🔄 [Auto Update] Đang cập nhật ${update.code}: "${update.currentStatus}" → "${update.newStatus}"`);
         
-        this.http.put(`http://localhost:3000/api/promotions/${update.id}`, {
+        this.http.put(`${environment.apiUrl}/promotions/${update.id}`, {
           status: update.newStatus
         }).subscribe({
           next: (response) => {
@@ -1396,7 +1397,7 @@ export class PromotionManage implements OnInit {
           console.warn('⚠️ Promotion missing ID:', promotion);
           return Promise.resolve(null);
         }
-        return this.http.delete(`http://localhost:3000/api/promotions/${promotionId}`).toPromise();
+        return this.http.delete(`${environment.apiUrl}/promotions/${promotionId}`).toPromise();
       });
 
       Promise.all(deletePromises).then(results => {
@@ -1613,7 +1614,7 @@ export class PromotionManage implements OnInit {
     };
 
     // Create promotion target
-    this.http.post('http://localhost:3000/api/promotion-targets', targetData).subscribe({
+    this.http.post(`${environment.apiUrl}/promotion-targets`, targetData).subscribe({
       next: (response: any) => {
         if (response.success) {
           console.log('✅ Promotion target created successfully:', response.data);
@@ -1630,7 +1631,7 @@ export class PromotionManage implements OnInit {
    * Create new promotion in MongoDB
    */
   createPromotionInMongoDB(promotionData: any): void {
-    this.http.post('http://localhost:3000/api/promotions', promotionData).subscribe({
+    this.http.post(`${environment.apiUrl}/promotions`, promotionData).subscribe({
       next: (response: any) => {
         if (response.success) {
           console.log('✅ Promotion created successfully:', response.data);
@@ -1718,10 +1719,10 @@ export class PromotionManage implements OnInit {
       console.log('🔄 [Update Promotion] Tự động tính toán status:', calculatedStatus);
     }
     
-    console.log('📤 [Update Promotion] Sending PUT request to:', `http://localhost:3000/api/promotions/${identifier}`);
+    console.log('📤 [Update Promotion] Sending PUT request to:', `${environment.apiUrl}/promotions/${identifier}`);
     console.log('📤 [Update Promotion] Request body:', promotionData);
     
-    this.http.put(`http://localhost:3000/api/promotions/${identifier}`, promotionData).subscribe({
+    this.http.put(`${environment.apiUrl}/promotions/${identifier}`, promotionData).subscribe({
       next: (response: any) => {
         console.log('✅ [Update Promotion] Response received:', response);
         
@@ -1738,7 +1739,7 @@ export class PromotionManage implements OnInit {
             } else if (promotionId && (promotionData.scope === 'Order' || promotionData.scope === 'Shipping')) {
               // Delete target if scope changed to Order/Shipping
               console.log('🔄 [Update Promotion] Deleting promotion target...');
-              this.http.delete(`http://localhost:3000/api/promotion-targets/${promotionId}`).subscribe({
+              this.http.delete(`${environment.apiUrl}/promotion-targets/${promotionId}`).subscribe({
                 next: () => console.log('✅ Promotion target deleted'),
                 error: (err) => {
                   // 404 is okay - target might not exist
@@ -2079,7 +2080,7 @@ export class PromotionManage implements OnInit {
    */
   updateDetailPromotionInMongoDB(promotionData: any, promotionId: string): void {
     // First, try to update by promotion_id
-    this.http.put<any>(`http://localhost:3000/api/promotions/${promotionId}`, promotionData).subscribe({
+    this.http.put<any>(`${environment.apiUrl}/promotions/${promotionId}`, promotionData).subscribe({
       next: (response) => {
         if (response.success) {
           console.log('✅ Updated promotion in MongoDB:', response.data);
@@ -2112,7 +2113,7 @@ export class PromotionManage implements OnInit {
     const scope = this.selectedPromotion?.scope;
     if (scope !== 'Category' && scope !== 'Product' && scope !== 'Brand') {
       // If scope changed to non-target, try to delete existing target
-      this.http.delete(`http://localhost:3000/api/promotion-targets/${promotionId}`).subscribe({
+      this.http.delete(`${environment.apiUrl}/promotion-targets/${promotionId}`).subscribe({
         next: () => {
           console.log('✅ Deleted promotion target (scope changed to non-target)');
         },
@@ -2150,7 +2151,7 @@ export class PromotionManage implements OnInit {
     };
 
     // Update promotion target
-    this.http.put<any>(`http://localhost:3000/api/promotion-targets/${promotionId}`, targetData).subscribe({
+    this.http.put<any>(`${environment.apiUrl}/promotion-targets/${promotionId}`, targetData).subscribe({
       next: (response) => {
         if (response.success) {
           console.log('✅ Updated promotion target:', response.data);
@@ -2161,7 +2162,7 @@ export class PromotionManage implements OnInit {
       error: (error) => {
         // If target doesn't exist, create it
         if (error.status === 404) {
-          this.http.post<any>(`http://localhost:3000/api/promotion-targets`, targetData).subscribe({
+          this.http.post<any>(`${environment.apiUrl}/promotion-targets`, targetData).subscribe({
             next: (response) => {
               if (response.success) {
                 console.log('✅ Created promotion target:', response.data);

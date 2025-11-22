@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth.service';
 import { NotificationService, AdminNotification } from '../services/notification.service';
 import { Subscription } from 'rxjs';
@@ -497,7 +498,7 @@ export class Layout implements OnInit, OnDestroy {
     }
 
     // Fetch order to check status - try OrderID first (from routes/orders.js)
-    this.http.get<any>(`http://localhost:3000/api/orders/${notification.orderId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/orders/${notification.orderId}`).subscribe({
       next: (response) => {
         let order: any = null;
         let orderStatus: string | null = null;
@@ -621,7 +622,7 @@ export class Layout implements OnInit, OnDestroy {
     // Show notification if there are pending orders OR return requests
     if (pendingOrderNotifications.length > 0 || returnRequestNotifications.length > 0) {
       // Fetch actual orders count from API to verify
-      this.http.get<any>('http://localhost:3000/api/orders').subscribe({
+      this.http.get<any>(`${environment.apiUrl}/orders`).subscribe({
         next: (response) => {
           let orders: any[] = [];
 

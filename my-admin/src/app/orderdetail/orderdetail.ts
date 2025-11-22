@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -2162,7 +2163,7 @@ export class OrderDetail implements OnInit, OnDestroy {
     console.log('🔄 Loading address data from MongoDB tree_complete collection (63 tỉnh thành)...');
 
     // Load tree data from MongoDB API - giống address-form.ts
-    this.http.get<any>('http://localhost:3000/api/tree_complete').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/tree_complete`).subscribe({
       next: (treeData: any) => {
         console.log('✅ Loaded tree_complete from MongoDB API');
 

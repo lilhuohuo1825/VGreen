@@ -1,43 +1,36 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, interval } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { startWith, switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
-
-export interface AdminNotification {
-  _id?: string;
-  id?: string;
-  type: 'order_cancellation_request' | 'new_order' | 'return_request' | 'consultation' | 'system' | 'other';
-  customerId?: string;
-  customerName?: string;
-  orderId?: string;
-  orderTotal?: number;
-  reason?: string;
-  title?: string;
-  message?: string;
-  sku?: string;
-  productName?: string;
-  questionId?: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active';
-  read: boolean;
-  createdAt: Date | string;
-  updatedAt?: Date | string;
+_id ?: string;
+id ?: string;
+type: 'order_cancellation_request' | 'new_order' | 'return_request' | 'consultation' | 'system' | 'other';
+customerId ?: string;
+customerName ?: string;
+orderId ?: string;
+orderTotal ?: number;
+reason ?: string;
+title ?: string;
+message ?: string;
+sku ?: string;
+productName ?: string;
+questionId ?: string;
+status: 'pending' | 'approved' | 'rejected' | 'active';
+read: boolean;
+createdAt: Date | string;
+updatedAt ?: Date | string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private apiUrl = 'http://localhost:3000/api/notifications';
+  private apiUrl = `${environment.apiUrl}/notifications`;
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$: Observable<number> = this.unreadCountSubject.asObservable();
-  
+
   private notificationsSubject = new BehaviorSubject<AdminNotification[]>([]);
   public notifications$: Observable<AdminNotification[]> = this.notificationsSubject.asObservable();
-  
+
   private newNotificationSubject = new BehaviorSubject<AdminNotification | null>(null);
   public newNotification$: Observable<AdminNotification | null> = this.newNotificationSubject.asObservable();
-  
+
   private pollingInterval = 5000; // 5 seconds for real-time updates
   private previousNotificationIds: Set<string> = new Set();
 
@@ -70,13 +63,13 @@ export class NotificationService {
           const currentIds = new Set(
             currentNotifications.map(n => n._id || n.id || '').filter(id => id)
           );
-          
+
           // Detect new notifications
           const newNotifications = currentNotifications.filter(n => {
             const id = n._id || n.id || '';
             return id && !this.previousNotificationIds.has(id) && !n.read;
           });
-          
+
           // If there are new notifications, emit them
           if (newNotifications.length > 0) {
             // Emit the most recent new notification
@@ -85,14 +78,14 @@ export class NotificationService {
               const dateB = new Date(b.createdAt).getTime();
               return dateB - dateA;
             })[0];
-            
+
             this.newNotificationSubject.next(latestNewNotification);
             console.log('🔔 New notification detected:', latestNewNotification);
           }
-          
+
           // Update previous IDs
           this.previousNotificationIds = currentIds;
-          
+
           // Update notifications
           this.notificationsSubject.next(currentNotifications);
           this.updateUnreadCount(currentNotifications);
@@ -120,7 +113,7 @@ export class NotificationService {
         if (this.previousNotificationIds.size === 0) {
           this.previousNotificationIds = currentIds;
         }
-        
+
         this.notificationsSubject.next(response.data);
         this.updateUnreadCount(response.data);
       }

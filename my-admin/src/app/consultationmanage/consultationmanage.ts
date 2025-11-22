@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 
@@ -78,7 +79,7 @@ export class ConsultationManage implements OnInit, OnDestroy {
   loadConsultations(): void {
     this.loadError = '';
     
-    this.http.get<any>('http://localhost:3000/api/consultations').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/consultations`).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.allConsultations = response.data;

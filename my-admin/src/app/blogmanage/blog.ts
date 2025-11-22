@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef, ViewChild, ElementRef, Af
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { NotificationService } from '../services/notification.service';
@@ -900,7 +901,7 @@ export class Blog implements OnInit, AfterViewInit {
     console.log(`🔄 Reloading blog ${blogId} from MongoDB...`);
     
     // Load blog from API
-    this.http.get<any>(`http://localhost:3000/api/blogs/${blogId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/blogs/${blogId}`).subscribe({
       next: (response: any) => {
         if (response.success && response.data) {
           console.log('✅ Reloaded blog from MongoDB:', response.data);

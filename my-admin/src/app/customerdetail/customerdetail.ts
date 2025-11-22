@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { ApiService } from '../services/api.service';
 
 @Component({
@@ -257,7 +258,7 @@ export class CustomerDetail implements OnInit {
     console.log(`📋 Loading customer detail for: ${customerID} (original: ${this.customerId})`);
     
     // Load from MongoDB API only
-    this.http.get<any>(`http://localhost:3000/api/users/customer/${customerID}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/users/customer/${customerID}`).subscribe({
       next: (response) => {
         console.log('📋 API Response:', response);
         
@@ -347,7 +348,7 @@ export class CustomerDetail implements OnInit {
     console.log(`📦 Loading orders for customer: ${customerID}`);
     
     // Load from MongoDB API only
-    this.http.get<any>(`http://localhost:3000/api/orders/customer/${customerID}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/orders/customer/${customerID}`).subscribe({
       next: (response) => {
         console.log('📦 Orders API Response:', response);
         
@@ -421,7 +422,7 @@ export class CustomerDetail implements OnInit {
     console.log(`📍 Loading addresses for customer: ${customerID}`);
     
     // Load from MongoDB API
-    this.http.get<any>(`http://localhost:3000/api/address/${customerID}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/address/${customerID}`).subscribe({
       next: (response) => {
         console.log('📍 Addresses API Response:', response);
         
@@ -1132,7 +1133,7 @@ export class CustomerDetail implements OnInit {
     console.log('📱 CustomerID:', customerID);
     
     // Call API to update customer in MongoDB
-    this.http.put(`http://localhost:3000/api/users/customer/${customerID}`, updateData).subscribe({
+    this.http.put(`${environment.apiUrl}/users/customer/${customerID}`, updateData).subscribe({
       next: (response: any) => {
         console.log('✅ Customer updated successfully in MongoDB:', response);
         
