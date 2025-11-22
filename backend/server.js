@@ -35,7 +35,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:4200",
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [])
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 // Tăng limit để nhận base64 images (tối đa 50MB cho review với nhiều ảnh)
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
@@ -251,8 +267,7 @@ connectDB()
             shouldComplete = receivedDateObj <= twentyFourHoursAgo;
             if (shouldComplete) {
               console.log(
-                `   📋 Order ${
-                  order.OrderID
+                `   📋 Order ${order.OrderID
                 }: Received date: ${receivedDateObj.toLocaleString(
                   "vi-VN"
                 )} (${Math.round(timeDiff / 1000)}s ago)`
@@ -2718,10 +2733,10 @@ app.get("/api/orders", checkMongoConnection, async (req, res) => {
                 const newTotalAmount = Math.max(
                   0,
                   newSubtotal +
-                    shippingFee -
-                    shippingDiscount -
-                    discount +
-                    vatAmount
+                  shippingFee -
+                  shippingDiscount -
+                  discount +
+                  vatAmount
                 );
 
                 // Cập nhật đơn hàng trong native collection
@@ -4742,8 +4757,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
           product = await productsCollection.findOne({ _id: new ObjectId(id) });
           if (product) {
             console.log(
-              `📦 [Products API] Found product by _id (ObjectId): ${
-                product.product_name || product.productName
+              `📦 [Products API] Found product by _id (ObjectId): ${product.product_name || product.productName
               }`
             );
           }
@@ -4754,8 +4768,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
       }
     } else {
       console.log(
-        `📦 [Products API] Found product by SKU: ${
-          product.product_name || product.productName
+        `📦 [Products API] Found product by SKU: ${product.product_name || product.productName
         }`
       );
     }
@@ -4766,8 +4779,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
         product = await productsCollection.findOne({ _id: id });
         if (product) {
           console.log(
-            `📦 [Products API] Found product by _id (string): ${
-              product.product_name || product.productName
+            `📦 [Products API] Found product by _id (string): ${product.product_name || product.productName
             }`
           );
         }
@@ -4785,8 +4797,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
         });
         if (product) {
           console.log(
-            `📦 [Products API] Found product by name (exact): ${
-              product.product_name || product.productName
+            `📦 [Products API] Found product by name (exact): ${product.product_name || product.productName
             }`
           );
         }
@@ -4811,8 +4822,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
         });
         if (product) {
           console.log(
-            `📦 [Products API] Found product by name (partial match): ${
-              product.product_name || product.productName
+            `📦 [Products API] Found product by name (partial match): ${product.product_name || product.productName
             }`
           );
         }
@@ -4827,8 +4837,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
         product = await productsCollection.findOne({ code: id });
         if (product) {
           console.log(
-            `📦 [Products API] Found product by code: ${
-              product.product_name || product.productName
+            `📦 [Products API] Found product by code: ${product.product_name || product.productName
             }`
           );
         }
@@ -4854,8 +4863,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
         console.log(`   Sample products in database:`);
         sampleProducts.forEach((p) => {
           console.log(
-            `     - _id: ${p._id}, SKU: ${p.sku || "N/A"}, name: ${
-              p.product_name || p.productName || "N/A"
+            `     - _id: ${p._id}, SKU: ${p.sku || "N/A"}, name: ${p.product_name || p.productName || "N/A"
             }`
           );
         });
@@ -4879,8 +4887,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
     }
 
     console.log(
-      `✅ [Products API] Found product: ${
-        product.product_name || product.productName
+      `✅ [Products API] Found product: ${product.product_name || product.productName
       } (${product._id})`
     );
 
@@ -4913,8 +4920,7 @@ app.delete("/api/products/:id", checkMongoConnection, async (req, res) => {
     });
 
     console.log(
-      `✅ [Products API] Product deleted successfully: ${
-        product.product_name || product.productName
+      `✅ [Products API] Product deleted successfully: ${product.product_name || product.productName
       }`
     );
 
@@ -5470,8 +5476,7 @@ app.put("/api/promotions/:id", checkMongoConnection, async (req, res) => {
     }
 
     console.log(
-      `✅ Promotion updated successfully: ${
-        promotion.promotion_id || promotion.code
+      `✅ Promotion updated successfully: ${promotion.promotion_id || promotion.code
       }`
     );
 
@@ -5531,8 +5536,7 @@ app.delete("/api/promotions/:id", checkMongoConnection, async (req, res) => {
     }
 
     console.log(
-      `✅ Promotion deleted successfully: ${
-        promotion.promotion_id || promotion.code
+      `✅ Promotion deleted successfully: ${promotion.promotion_id || promotion.code
       }`
     );
 
@@ -6046,9 +6050,8 @@ function extractKeywordsFromBlog(title, content, categoryTag) {
   ];
 
   // Combine title, content, and categoryTag
-  const combinedText = `${title || ""} ${content || ""} ${
-    categoryTag || ""
-  }`.toLowerCase();
+  const combinedText = `${title || ""} ${content || ""} ${categoryTag || ""
+    }`.toLowerCase();
 
   // Remove HTML tags
   const textWithoutHtml = combinedText.replace(/<[^>]*>/g, " ");
@@ -6854,9 +6857,9 @@ app.post("/api/blogs", checkMongoConnection, async (req, res) => {
       // Convert string to array if needed
       finalHashtags = finalHashtags.trim()
         ? finalHashtags
-            .split(",")
-            .map((h) => h.trim())
-            .filter((h) => h)
+          .split(",")
+          .map((h) => h.trim())
+          .filter((h) => h)
         : [];
     } else if (!Array.isArray(finalHashtags)) {
       finalHashtags = [];
@@ -6988,9 +6991,9 @@ app.put("/api/blogs/:id", checkMongoConnection, async (req, res) => {
         // Convert string to array
         updateData.hashtags = hashtags.trim()
           ? hashtags
-              .split(",")
-              .map((h) => h.trim())
-              .filter((h) => h)
+            .split(",")
+            .map((h) => h.trim())
+            .filter((h) => h)
           : [];
       } else if (Array.isArray(hashtags)) {
         updateData.hashtags = hashtags;
@@ -7496,8 +7499,8 @@ async function createPromotionNotificationForAllUsers(promotion) {
     const minOrderText =
       promotion.min_order_value > 0
         ? ` (Áp dụng cho đơn hàng từ ${promotion.min_order_value.toLocaleString(
-            "vi-VN"
-          )}₫)`
+          "vi-VN"
+        )}₫)`
         : "";
 
     const endDateText = promotion.end_date
@@ -7505,11 +7508,9 @@ async function createPromotionNotificationForAllUsers(promotion) {
       : "";
 
     const title = "🎉 Khuyến mãi mới từ VGreen!";
-    const message = `Mã khuyến mãi "${promotion.code}" - ${
-      promotion.name
-    }: Giảm ${discountText}${minOrderText}${
-      endDateText ? `. Hết hạn: ${endDateText}` : ""
-    }. Nhanh tay sử dụng ngay!`;
+    const message = `Mã khuyến mãi "${promotion.code}" - ${promotion.name
+      }: Giảm ${discountText}${minOrderText}${endDateText ? `. Hết hạn: ${endDateText}` : ""
+      }. Nhanh tay sử dụng ngay!`;
 
     // Create notifications for all users
     const notifications = users.map((user) => ({
@@ -7778,9 +7779,8 @@ app.put(
 
       res.json({
         success: true,
-        message: `Notification ${
-          action === "approve" ? "approved" : "rejected"
-        }`,
+        message: `Notification ${action === "approve" ? "approved" : "rejected"
+          }`,
         data: {
           id: id,
           status: newStatus,
