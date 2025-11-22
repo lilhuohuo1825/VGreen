@@ -33,6 +33,20 @@ export interface Product {
   liked?: number;
 }
 
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface ProductsResponse {
+  products: Product[];
+  pagination: PaginationInfo;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -43,20 +57,55 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   /**
-  * Lấy tất cả sản phẩm
+  * Lấy tất cả sản phẩm với pagination
+  * @param page - Trang hiện tại (default: 1)
+  * @param limit - Số sản phẩm mỗi trang (default: 20)
   */
-  getAllProducts(): Observable<Product[]> {
-    // console.log(' [ProductService] Fetching all products from API...');
-    return this.http.get<any>(this.apiUrl).pipe(
-      tap((response) => {
-        // console.log(` [ProductService] Received ${response.count} products`);
+  getAllProducts(page: number = 1, limit: number = 20): Observable<ProductsResponse> {
+    return this.http.get<any>(`${this.apiUrl}?page=${page}&limit=${limit}`).pipe(
+      map((response) => ({
+        products: response.data || [],
+        pagination: response.pagination || {
+          page: 1,
+          limit: 20,
+          total: 0,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false
+        }
+      })),
+      tap((result) => {
+        // Update cache with current page products
+        this.productsCache$.next(result.products);
       }),
-      map((response) => response.data),
+      catchError((error) => {
+        console.error('[ProductService] Error fetching products:', error);
+        return of({
+          products: [],
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPrevPage: false
+          }
+        });
+      })
+    );
+  }
+
+  /**
+  * Lấy tất cả sản phẩm (không phân trang) - để backward compatibility
+  */
+  getAllProductsNoPagination(): Observable<Product[]> {
+    return this.http.get<any>(`${this.apiUrl}?limit=1000`).pipe(
+      map((response) => response.data || []),
       tap((products) => {
         this.productsCache$.next(products);
       }),
       catchError((error) => {
-        // console.error(' [ProductService] Error fetching products:', error);
+        console.error('[ProductService] Error fetching products:', error);
         return of([]);
       })
     );
@@ -95,7 +144,7 @@ export class ProductService {
     }
 
     // If not in cache, fetch from API
-    return this.getAllProducts().pipe(
+    return this.getAllProductsNoPagination().pipe(
       map((products) => {
         const product = products.find((p) => p.sku === sku);
         if (product) {
@@ -166,7 +215,7 @@ export class ProductService {
   getCategoriesWithSubcategories(): Observable<{ name: string; subcategories: string[] }[]> {
     // console.log(' [ProductService] Extracting categories from products...');
 
-    return this.getAllProducts().pipe(
+    return this.getAllProductsNoPagination().pipe(
       map((products) => {
         // Tạo Map để lưu các category và subcategories
         const categoryMap = new Map<string, Set<string>>();
