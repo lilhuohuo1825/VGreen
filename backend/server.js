@@ -3834,11 +3834,20 @@ app.put("/api/orders/:orderId", checkMongoConnection, async (req, res) => {
 // ============================================================================
 
 /**
- * GET all products
+ * GET all products with pagination support
+ * Query params:
+ *   - page: Page number (default: 1)
+ *   - limit: Items per page (default: 20, max: 100)
+ *   - group: Filter by group (optional)
  */
 app.get("/api/products", checkMongoConnection, async (req, res) => {
   try {
-    const { group } = req.query; // Filter by group if provided
+    const { group, page = 1, limit = 20 } = req.query;
+
+    // Parse and validate pagination parameters
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 20));
+    const skip = (pageNum - 1) * limitNum;
 
     // Build query
     let query = { status: "Active" };
@@ -3846,7 +3855,16 @@ app.get("/api/products", checkMongoConnection, async (req, res) => {
       query.groups = group; // Filter by group name
     }
 
-    const products = await productsCollection.find(query).toArray();
+    // Get total count for pagination
+    const totalCount = await productsCollection.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limitNum);
+
+    // Fetch products with pagination
+    const products = await productsCollection
+      .find(query)
+      .skip(skip)
+      .limit(limitNum)
+      .toArray();
 
     // Import rating service to calculate reviewCount (rating is already synced in products collection)
     const { calculateProductRating } = require("./services/rating.service");
@@ -3876,6 +3894,14 @@ app.get("/api/products", checkMongoConnection, async (req, res) => {
       success: true,
       data: productsWithRatings,
       count: productsWithRatings.length,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total: totalCount,
+        totalPages: totalPages,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1
+      }
     });
   } catch (error) {
     console.error("Error fetching products:", error);
