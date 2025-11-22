@@ -30,7 +30,9 @@ const {
 } = require("./db");
 
 const app = express();
-const PORT = 3000;
+// Railway tự động cung cấp PORT qua environment variable
+// Fallback về 3000 cho local development
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -7796,12 +7798,55 @@ app.put(
 );
 
 // ============================================================================
+// ROOT ROUTE - API Information
+// ============================================================================
+
+app.get("/", (req, res) => {
+  res.json({
+    name: "VGreen Backend API",
+    version: "1.0.0",
+    status: "running",
+    environment: process.env.NODE_ENV || "development",
+    database: DB_NAME,
+    mongodb_connected: isMongoConnected,
+    endpoints: {
+      base: "/api",
+      docs: "See README.md for API documentation",
+      health: "/api/health",
+      auth: "/api/auth",
+      users: "/api/users",
+      products: "/api/products",
+      orders: "/api/orders",
+      promotions: "/api/promotions",
+      reviews: "/api/reviews",
+      blogs: "/api/blogs"
+    }
+  });
+});
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    mongodb: {
+      connected: isMongoConnected,
+      database: DB_NAME
+    },
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
+// ============================================================================
 // SERVER START
 // ============================================================================
 
-app.listen(PORT, () => {
-  console.log(`Backend API server running on http://localhost:${PORT}`);
+// Railway cần listen trên 0.0.0.0, không phải localhost
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Backend API server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Database: ${DB_NAME}`);
+  console.log(`Access API at: http://0.0.0.0:${PORT}/api`);
 });
 
 // Handle graceful shutdown

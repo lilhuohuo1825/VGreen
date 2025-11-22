@@ -1,4 +1,19 @@
 {
   "name": "vgreen-root",
-  "private": true
+  "version": "1.0.0",
+  "description": "VGreen Fullstack Application",
+  "private": true,
+  "scripts": {
+    "setup": "node setup.js",
+    "backend": "cd backend && npm start",
+    "serve": "npx concurrently \"npm run backend\" \"cd my-user && ng serve --open\"",
+    "import-json": "cd backend && node scripts/import-all-json.js",
+    "fix-angular": "node fix-angular-build.js",
+    "check-data": "cd backend && node scripts/check-data.js",
+    "list-collections": "cd backend && node scripts/list-collections.js",
+    "init-db": "cd backend && npm run init-db"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
 }
