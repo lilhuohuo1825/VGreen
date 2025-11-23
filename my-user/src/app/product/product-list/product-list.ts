@@ -1850,6 +1850,11 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  isFavorite(product: Product): boolean {
+    const wishlist = this.wishlistService.getCurrentWishlist();
+    return wishlist.some((item) => item.sku === product.sku);
+  }
+
   // -----------------------------
   // 🎯 Promotion Methods
   // -----------------------------
