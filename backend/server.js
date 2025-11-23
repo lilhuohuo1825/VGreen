@@ -3842,7 +3842,18 @@ app.put("/api/orders/:orderId", checkMongoConnection, async (req, res) => {
  */
 app.get("/api/products", checkMongoConnection, async (req, res) => {
   try {
-    const { group, page = 1, limit = 20 } = req.query;
+    const {
+      group,
+      page = 1,
+      limit = 20,
+      category,
+      subcategory,
+      minPrice,
+      maxPrice,
+      sort,
+      search,
+      promotion,
+    } = req.query;
 
     // Parse and validate pagination parameters
     const pageNum = Math.max(1, parseInt(page) || 1);
@@ -3851,17 +3862,79 @@ app.get("/api/products", checkMongoConnection, async (req, res) => {
 
     // Build query
     let query = { status: "Active" };
+
+    // Filter by group
     if (group && group !== "all") {
-      query.groups = group; // Filter by group name
+      query.groups = group;
     }
 
-    // Get total count for pagination
+    // Filter by Category
+    if (category) {
+      query.Category = category;
+    }
+
+    // Filter by Subcategory
+    if (subcategory) {
+      query.Subcategory = subcategory;
+    }
+
+    // Filter by Price Range
+    if (minPrice || maxPrice) {
+      query.Price = {};
+      if (minPrice) query.Price.$gte = parseInt(minPrice);
+      if (maxPrice) query.Price.$lte = parseInt(maxPrice);
+    }
+
+    // Filter by Search (ProductName)
+    if (search) {
+      // Remove accents for better search (optional, depends on requirement)
+      // For now, simple regex search
+      query.ProductName = { $regex: search, $options: "i" };
+    }
+
+    // Filter by Promotion
+    if (promotion === "true") {
+      // Check for hasPromotion flag or promotionType
+      query.$or = [
+        { hasPromotion: true },
+        { promotionType: { $exists: true, $ne: null } },
+      ];
+    }
+
+    // Build Sort Object
+    let sortOptions = {};
+    if (sort) {
+      switch (sort) {
+        case "newest":
+          sortOptions.PostDate = -1; // Descending
+          break;
+        case "bestseller":
+          sortOptions.PurchaseCount = -1; // Descending
+          break;
+        case "price-asc":
+          sortOptions.Price = 1; // Ascending
+          break;
+        case "price-desc":
+          sortOptions.Price = -1; // Descending
+          break;
+        case "name-asc":
+          sortOptions.ProductName = 1; // Ascending
+          break;
+        default:
+          sortOptions.PostDate = -1; // Default to newest
+      }
+    } else {
+      sortOptions.PostDate = -1; // Default sort
+    }
+
+    // Get total count for pagination (with filters applied)
     const totalCount = await productsCollection.countDocuments(query);
     const totalPages = Math.ceil(totalCount / limitNum);
 
-    // Fetch products with pagination
+    // Fetch products with pagination, filtering, and sorting
     const products = await productsCollection
       .find(query)
+      .sort(sortOptions)
       .skip(skip)
       .limit(limitNum)
       .toArray();

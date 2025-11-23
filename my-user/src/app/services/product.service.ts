@@ -47,6 +47,19 @@ export interface ProductsResponse {
   pagination: PaginationInfo;
 }
 
+export interface ProductFilters {
+  page?: number;
+  limit?: number;
+  category?: string;
+  subcategory?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+  search?: string;
+  group?: string;
+  promotion?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,17 +70,37 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   /**
-  * Lấy tất cả sản phẩm với pagination
-  * @param page - Trang hiện tại (default: 1)
-  * @param limit - Số sản phẩm mỗi trang (default: 20)
+  * Lấy tất cả sản phẩm với pagination và filtering
+  * @param filters - Object chứa các điều kiện lọc
   */
-  getAllProducts(page: number = 1, limit: number = 20): Observable<ProductsResponse> {
-    return this.http.get<any>(`${this.apiUrl}?page=${page}&limit=${limit}`).pipe(
+  getAllProducts(filters: ProductFilters | number = 1, limit: number = 20): Observable<ProductsResponse> {
+    let params: any = {};
+
+    if (typeof filters === 'number') {
+      // Backward compatibility: getAllProducts(page, limit)
+      params.page = filters;
+      params.limit = limit;
+    } else {
+      // New usage: getAllProducts(filters)
+      params = { ...filters };
+      if (!params.page) params.page = 1;
+      if (!params.limit) params.limit = 20;
+    }
+
+    // Construct query string
+    const queryParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        queryParams.append(key, params[key].toString());
+      }
+    });
+
+    return this.http.get<any>(`${this.apiUrl}?${queryParams.toString()}`).pipe(
       map((response) => ({
         products: response.data || [],
         pagination: response.pagination || {
-          page: 1,
-          limit: 20,
+          page: params.page,
+          limit: params.limit,
           total: 0,
           totalPages: 0,
           hasNextPage: false,
@@ -83,8 +116,8 @@ export class ProductService {
         return of({
           products: [],
           pagination: {
-            page: 1,
-            limit: 20,
+            page: params.page,
+            limit: params.limit,
             total: 0,
             totalPages: 0,
             hasNextPage: false,

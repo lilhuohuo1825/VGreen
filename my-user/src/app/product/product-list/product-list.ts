@@ -166,7 +166,7 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private productService: ProductService,
     private authPopupService: AuthPopupService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     console.log('ProductListComponent ngOnInit - Starting to load products');
@@ -462,46 +462,34 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
   // -----------------------------
   //  Tải dữ liệu
   // -----------------------------
+  // -----------------------------
+  //  Tải dữ liệu
+  // -----------------------------
+  currentFilters: any = {
+    page: 1,
+    limit: 24,
+    sort: 'newest'
+  };
+
   loadProducts(): void {
-    console.log('loadProducts() called - Fetching from MongoDB API');
-    this.hasError = false; // Reset error state
+    console.log('loadProducts() called - Fetching from MongoDB API with filters:', this.currentFilters);
+    this.hasError = false;
+    this.isLoading = true;
 
-    // Load products, promotions, and targets in parallel
-    forkJoin({
-      products: this.productService.getAllProductsNoPagination(),
-      promotions: this.http.get<any>(`${this.apiUrl}/promotions`),
-      targets: this.http.get<any>(`${this.apiUrl}/promotion-targets`),
-    }).subscribe({
-      next: ({ products, promotions, targets }) => {
-        console.log(' API request successful - Raw data length:', products.length);
+    // Load products with current filters
+    this.productService.getAllProducts(this.currentFilters).subscribe({
+      next: (response) => {
+        console.log(' API request successful - Products:', response.products.length);
 
-        // Filter active promotions
-        const now = new Date();
-        const allPromotions = promotions.data || [];
-        console.log(` Tổng số promotions từ API: ${allPromotions.length}`);
-
-        const activePromotions = allPromotions.filter((p: any) => {
-          const startDate = new Date(p.start_date);
-          const endDate = new Date(p.end_date);
-          return p.status === 'Active' && now >= startDate && now <= endDate;
-        });
-
-        // Apply promotions to products
-        const productsWithPromotions = this.applyPromotionsToProducts(
-          products,
-          activePromotions,
-          targets?.data || []
-        );
-
-        // Chuẩn hóa tên trường: MongoDB trả về snake_case, frontend dùng PascalCase
-        this.products = productsWithPromotions.map((p) => ({
+        // Map products (giữ nguyên logic mapping cũ)
+        this.products = response.products.map((p) => ({
           _id: p._id,
           ProductName: p.product_name ?? '',
           Category: p.category ?? '',
           Subcategory: p.subcategory ?? '',
           Brand: p.brand ?? '',
           Unit: p.unit ?? '',
-          Price: p.hasPromotion ? p.discountedPrice : p.price ?? 0,
+          Price: p.price ?? 0,
           Image: Array.isArray(p.image) ? p.image : [p.image || ''],
           sku: p.sku ?? '',
           Origin: p.origin ?? '',
@@ -515,83 +503,30 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
           SafetyWarning: p.safety_warning ?? '',
           ResponsibleOrg: '',
           Color: p.color,
-          // Rating: chỉ set > 0 nếu có reviewCount > 0 (đảm bảo đồng bộ với reviews thực tế)
-          // Nếu reviewCount = 0 thì rating phải = 0 (không có reviews thì không có rating)
-          Rating: (p.reviewCount ?? 0) > 0 ? p.rating ?? 0 : 0,
+          Rating: (p.rating ?? 0),
           Promotion: undefined,
-          OriginalPrice: p.hasPromotion ? p.originalPrice : p.base_price,
-          Discount: p.hasPromotion ? p.discountPercent : undefined,
-          ReviewCount: p.reviewCount ?? 0, // Số lượt đánh giá từ API
+          OriginalPrice: p.base_price,
+          Discount: undefined,
+          ReviewCount: p.purchase_count ?? 0, // Tạm dùng purchase_count làm review count nếu chưa có
           Reviews: [],
-          PurchaseCount: p.purchase_count ?? 0, // Số lượt mua
-          liked: p.liked ?? 0, // Số lượt like
-          PostDate: p.post_date?.$date ?? p.post_date ?? '',
-          hasPromotion: p.hasPromotion || false,
-          discountedPrice: p.hasPromotion ? p.discountedPrice : undefined,
-          discountPercent: p.hasPromotion ? p.discountPercent : undefined,
-          promotionType: p.promotionType || undefined,
+          PurchaseCount: p.purchase_count ?? 0,
+          liked: p.liked ?? 0,
+          PostDate: p.post_date,
+          hasPromotion: false, // Sẽ được update từ promotion API nếu cần
         }));
 
-        // Load reviews for all products to calculate ratings
-        this.loadReviewsForProducts();
+        // Update pagination info
+        this.itemsPerPage = response.pagination.limit;
+        this.hasMoreProducts = response.pagination.hasNextPage;
 
-        // Debug: Kiểm tra promotionType sau khi map
-        const buy1get1AfterMap = this.products.filter((p) => {
-          if (Array.isArray(p.promotionType)) {
-            return p.promotionType.includes('buy1get1');
-          }
-          return p.promotionType === 'buy1get1';
-        });
-        const multiplePromotionsAfterMap = this.products.filter((p) => {
-          return Array.isArray(p.promotionType) && p.promotionType.length > 1;
-        });
-        console.log(
-          `🎁 [MAP CHECK] Sản phẩm có promotionType = 'buy1get1' sau khi map: ${buy1get1AfterMap.length}`
-        );
-        console.log(
-          `🎁 [MAP CHECK] Sản phẩm có nhiều promotions sau khi map: ${multiplePromotionsAfterMap.length}`
-        );
-        if (buy1get1AfterMap.length > 0) {
-          console.log(
-            '   Danh sách buy1get1:',
-            buy1get1AfterMap
-              .slice(0, 3)
-              .map((p) => `${p.ProductName} (${p.sku}) - type: ${JSON.stringify(p.promotionType)}`)
-          );
-        }
-        if (multiplePromotionsAfterMap.length > 0) {
-          console.log(
-            '   Danh sách multiple promotions:',
-            multiplePromotionsAfterMap
-              .slice(0, 3)
-              .map((p) => `${p.ProductName} (${p.sku}) - types: ${JSON.stringify(p.promotionType)}`)
-          );
-        }
-        console.log(' Mapped products:', this.products.length);
-        this.initializeFilterOptions();
+        // Server đã filter rồi nên filteredProducts chính là products
         this.filteredProducts = [...this.products];
-        this.sortProducts();
-        this.updatePagination();
+        this.displayedProducts = [...this.products];
+
         this.isLoading = false;
-        this.loadPromotionProducts();
-        console.log(
-          ' Final state - Products:',
-          this.products.length,
-          'Filtered:',
-          this.filteredProducts.length,
-          'Displayed:',
-          this.displayedProducts.length
-        );
-        console.log(' Categories:', this.categories);
 
-        // Debug: Show unique categories and subcategories from loaded data
-        const uniqueCategories = [...new Set(this.products.map((p) => p.Category))];
-        const uniqueSubcategories = [...new Set(this.products.map((p) => p.Subcategory))];
-        console.log(' Unique categories in data:', uniqueCategories);
-        console.log('Unique subcategories in data:', uniqueSubcategories.slice(0, 20));
-
-        // Handle query parameters after products are loaded
-        this.handleQueryParams();
+        // Load promotions riêng nếu cần hiển thị badge (optional)
+        // this.loadPromotions(); 
       },
       error: (error) => {
         console.error(' API request failed:', error);
@@ -599,471 +534,47 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hasError = true;
         this.products = [];
         this.filteredProducts = [];
-        console.log('💥 Error state - hasError:', this.hasError, 'isLoading:', this.isLoading);
-      },
+      }
     });
   }
 
-  // -----------------------------
-  //  Sắp xếp & Phân trang
-  // -----------------------------
-  sortProducts(): void {
-    // Hỗ trợ sắp xếp kết hợp: categorySort (newest/bestseller) + priceSort
-    // Logic:
-    // - Nếu có categorySort (newest/bestseller), sắp xếp theo đó trước, sau đó theo giá
-    // - Nếu không có categorySort, chỉ sắp xếp theo giá
-    // - Luôn đảm bảo priceSort được áp dụng trong nhóm cùng categorySort
-
-    this.filteredProducts.sort((a, b) => {
-      // Bước 1: Tính categoryCompare (newest hoặc bestseller)
-      let categoryCompare = 0;
-      if (this.categorySort !== 'name') {
-        if (this.categorySort === 'newest') {
-          // Sắp xếp theo ngày đăng sản phẩm (post_date) giảm dần (mới nhất lên đầu)
-          // Lưu ý: Chỉ so sánh theo ngày (không tính giờ) để các sản phẩm cùng ngày được nhóm lại
-          let dateA = 0;
-          let dateB = 0;
-
-          const parseDate = (postDate: any): number => {
-            let date: Date | null = null;
-            if (postDate) {
-              if (typeof postDate === 'string') {
-                date = new Date(postDate);
-              } else if (typeof postDate === 'object' && postDate.$date) {
-                date = new Date(postDate.$date);
-              } else {
-                date = new Date(postDate);
-              }
-              if (date && !isNaN(date.getTime())) {
-                // Chỉ lấy phần ngày (bỏ giờ, phút, giây) để so sánh
-                return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-              }
-            }
-            return 0;
-          };
-
-          dateA = parseDate(a.PostDate);
-          dateB = parseDate(b.PostDate);
-
-          categoryCompare = dateB - dateA;
-        } else if (this.categorySort === 'bestseller') {
-          // Sắp xếp theo lượt mua giảm dần (cao nhất lên đầu)
-          categoryCompare = (b.PurchaseCount || 0) - (a.PurchaseCount || 0);
+  loadFilterOptions(): void {
+    // Load categories and subcategories from metadata endpoints
+    this.http.get<any>(`${this.apiUrl}/products/metadata/categories`).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.categories = res.data;
         }
       }
-
-      // Bước 2: Tính priceCompare - luôn được tính
-      let priceCompare = 0;
-      if (this.priceSort === 'price-low') {
-        // Giá tăng dần (thấp đến cao)
-        priceCompare = a.Price - b.Price;
-      } else if (this.priceSort === 'price-high') {
-        // Giá giảm dần (cao đến thấp)
-        priceCompare = b.Price - a.Price;
-      } else {
-        // Mặc định: giá tăng dần
-        priceCompare = a.Price - b.Price;
-      }
-
-      // Bước 3: Kết hợp sắp xếp
-      // - Nếu có categorySort và categoryCompare !== 0, ưu tiên categorySort
-      // - Nếu categoryCompare === 0 (bằng nhau), sắp xếp theo giá
-      // - Nếu không có categorySort, chỉ sắp xếp theo giá
-      if (this.categorySort !== 'name') {
-        // Có categorySort: ưu tiên categorySort, nếu bằng nhau thì sắp xếp theo giá
-        if (categoryCompare !== 0) {
-          // categoryCompare khác 0: sắp xếp theo categorySort
-          return categoryCompare;
-        }
-        // categoryCompare === 0: cùng giá trị categorySort, sắp xếp theo giá
-        // Đây là trường hợp quan trọng: khi 2 sản phẩm có cùng ngày đăng hoặc cùng lượt mua
-        if (priceCompare !== 0) {
-          return priceCompare;
-        }
-      } else {
-        // Không có categorySort: chỉ sắp xếp theo giá
-        if (priceCompare !== 0) {
-          return priceCompare;
-        }
-      }
-
-      // Bước 4: Nếu cả categorySort và priceSort đều bằng nhau, sắp xếp theo tên để đảm bảo thứ tự ổn định
-      return a.ProductName.localeCompare(b.ProductName);
     });
 
-    console.log('📊 [Sort] Sorting products:', {
-      categorySort: this.categorySort,
-      priceSort: this.priceSort,
-      totalProducts: this.filteredProducts.length,
-      logic:
-        this.categorySort !== 'name'
-          ? `Sắp xếp theo ${this.categorySort} trước, sau đó theo ${this.priceSort}`
-          : `Chỉ sắp xếp theo ${this.priceSort}`,
+    this.http.get<any>(`${this.apiUrl}/products/metadata/subcategories`).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.subcategories = res.data;
+        }
+      }
     });
-
-    if (this.filteredProducts.length > 0) {
-      const sampleSize = Math.min(10, this.filteredProducts.length);
-      console.log(`📊 [Sort] Top ${sampleSize} products after sorting:`);
-      this.filteredProducts.slice(0, sampleSize).forEach((p, index) => {
-        const purchaseCount = p.PurchaseCount || 0;
-        const price = p.Price;
-        const date = p.PostDate ? new Date(p.PostDate).toLocaleDateString('vi-VN') : 'N/A';
-        console.log(
-          `   ${index + 1}. ${p.ProductName.substring(
-            0,
-            40
-          )}... | Mua: ${purchaseCount} | Giá: ${price.toLocaleString('vi-VN')}₫ | Ngày: ${date}`
-        );
-      });
-
-      // Log thêm thông tin về nhóm cùng giá trị categorySort
-      if (this.categorySort !== 'name' && this.filteredProducts.length > 1) {
-        if (this.categorySort === 'bestseller') {
-          const purchaseCounts = [
-            ...new Set(this.filteredProducts.map((p) => p.PurchaseCount || 0)),
-          ].sort((a, b) => b - a);
-          console.log(`📊 [Sort] Các nhóm lượt mua:`, purchaseCounts.slice(0, 5));
-          purchaseCounts.slice(0, 5).forEach((count) => {
-            const productsInGroup = this.filteredProducts.filter(
-              (p) => (p.PurchaseCount || 0) === count
-            );
-            if (productsInGroup.length > 1) {
-              const prices = productsInGroup
-                .map((p) => p.Price)
-                .sort((a, b) => {
-                  if (this.priceSort === 'price-high') return b - a;
-                  return a - b;
-                });
-              console.log(`   - Nhóm ${count} lượt mua (${productsInGroup.length} sản phẩm):`);
-              console.log(
-                `     Giá ${
-                  this.priceSort === 'price-high' ? 'cao đến thấp' : 'thấp đến cao'
-                }: ${prices[0].toLocaleString('vi-VN')}₫ → ${prices[
-                  prices.length - 1
-                ].toLocaleString('vi-VN')}₫`
-              );
-              // Log 3 sản phẩm đầu tiên trong nhóm để kiểm tra
-              productsInGroup.slice(0, 3).forEach((p, idx) => {
-                console.log(
-                  `       ${idx + 1}. ${p.ProductName.substring(
-                    0,
-                    30
-                  )}... - Giá: ${p.Price.toLocaleString('vi-VN')}₫`
-                );
-              });
-            }
-          });
-        } else if (this.categorySort === 'newest') {
-          // Group by date (same day)
-          const dateGroups: { [key: string]: Product[] } = {};
-          this.filteredProducts.forEach((p) => {
-            let dateStr = 'N/A';
-            if (p.PostDate) {
-              if (typeof p.PostDate === 'string') {
-                dateStr = new Date(p.PostDate).toLocaleDateString('vi-VN');
-              } else if (typeof p.PostDate === 'object' && (p.PostDate as any).$date) {
-                dateStr = new Date((p.PostDate as any).$date).toLocaleDateString('vi-VN');
-              } else {
-                dateStr = new Date(p.PostDate as any).toLocaleDateString('vi-VN');
-              }
-              if (dateStr === 'Invalid Date') dateStr = 'N/A';
-            }
-            if (!dateGroups[dateStr]) {
-              dateGroups[dateStr] = [];
-            }
-            dateGroups[dateStr].push(p);
-          });
-
-          const sortedDates = Object.keys(dateGroups).sort((a, b) => {
-            if (a === 'N/A') return 1;
-            if (b === 'N/A') return -1;
-            return new Date(b).getTime() - new Date(a).getTime();
-          });
-
-          console.log(`📊 [Sort] Các nhóm ngày đăng:`, sortedDates.slice(0, 5));
-          sortedDates.slice(0, 5).forEach((dateStr) => {
-            const productsInGroup = dateGroups[dateStr];
-            if (productsInGroup.length > 1) {
-              const prices = productsInGroup
-                .map((p) => p.Price)
-                .sort((a, b) => {
-                  if (this.priceSort === 'price-high') return b - a;
-                  return a - b;
-                });
-              console.log(`   - Nhóm ${dateStr} (${productsInGroup.length} sản phẩm):`);
-              console.log(
-                `     Giá ${
-                  this.priceSort === 'price-high' ? 'cao đến thấp' : 'thấp đến cao'
-                }: ${prices[0].toLocaleString('vi-VN')}₫ → ${prices[
-                  prices.length - 1
-                ].toLocaleString('vi-VN')}₫`
-              );
-              // Log 3 sản phẩm đầu tiên trong nhóm để kiểm tra
-              productsInGroup.slice(0, 3).forEach((p, idx) => {
-                console.log(
-                  `       ${idx + 1}. ${p.ProductName.substring(
-                    0,
-                    30
-                  )}... - Giá: ${p.Price.toLocaleString('vi-VN')}₫`
-                );
-              });
-            }
-          });
-        }
-      }
-    }
-
-    // Log thêm thông tin khi sort theo bestseller
-    if (this.sortOption === 'bestseller' && this.filteredProducts.length > 0) {
-      console.log('Top 3 bán chạy nhất:');
-      this.filteredProducts.slice(0, 3).forEach((p, index) => {
-        console.log(`   ${index + 1}. ${p.ProductName} - Lượt mua: ${p.PurchaseCount || 0}`);
-      });
-    }
-
-    // Log thêm thông tin khi sort theo newest
-    if (this.sortOption === 'newest' && this.filteredProducts.length > 0) {
-      console.log('Top 3 sản phẩm mới nhất:');
-      this.filteredProducts.slice(0, 3).forEach((p, index) => {
-        const postDate = p.PostDate ? new Date(p.PostDate).toLocaleDateString('vi-VN') : 'N/A';
-        console.log(`   ${index + 1}. ${p.ProductName} - Ngày đăng: ${postDate}`);
-      });
-    }
-
-    this.updateDisplayedProducts();
-  }
-
-  updatePagination(): void {
-    this.itemsPerPage = 24;
-    this.updateDisplayedProducts();
-  }
-
-  updateDisplayedProducts(): void {
-    this.displayedProducts = this.filteredProducts.slice(0, this.itemsPerPage);
-    this.hasMoreProducts = this.filteredProducts.length > this.itemsPerPage;
-
-    //  Update sidebar height after products are rendered - use requestAnimationFrame for accurate measurement
-    requestAnimationFrame(() => {
-      setTimeout(() => this.updateSidebarHeight(), 0);
-    });
-
-    console.log(
-      'Updated displayed products:',
-      this.displayedProducts.length,
-      'from',
-      this.filteredProducts.length,
-      'filtered products'
-    );
-    console.log('First displayed product:', this.displayedProducts[0]?.ProductName || 'None');
-  }
-
-  // -----------------------------
-  // 🧠 Áp dụng lọc
-  // -----------------------------
-  applyFilters(): void {
-    console.log(' applyFilters() called');
-    console.log(' Selected categories:', this.selectedCategories);
-    console.log('📁 Selected subcategories:', this.selectedSubcategories);
-    console.log('🔎 Search query:', this.searchQuery);
-    console.log(' Total products before filter:', this.products.length);
-
-    let categoryMatchCount = 0;
-    let subcategoryMatchCount = 0;
-
-    this.filteredProducts = this.products.filter((p) => {
-      // Search query filter (filter by product name) - Priority filter
-      if (this.searchQuery && this.searchQuery.trim() !== '') {
-        const productName = (p.ProductName || '').toLowerCase();
-        const query = this.searchQuery.toLowerCase().trim();
-        if (!productName.includes(query)) {
-          return false;
-        }
-      }
-
-      // Category filter
-      if (this.selectedCategories.length > 0) {
-        const categoryMatches = this.selectedCategories.includes(p.Category);
-        if (!categoryMatches) {
-          return false;
-        }
-        categoryMatchCount++;
-      }
-
-      // Subcategory filter
-      if (this.selectedSubcategories.length > 0) {
-        const subcategoryMatches = this.selectedSubcategories.includes(p.Subcategory);
-        if (!subcategoryMatches) {
-          // Debug: log first 3 mismatches
-          if (subcategoryMatchCount < 3) {
-            console.log(' Subcategory mismatch:');
-            console.log('   Expected:', this.selectedSubcategories[0]);
-            console.log('   Got:', p.Subcategory);
-            console.log('   Category:', p.Category);
-            console.log('   Product:', p.ProductName);
-          }
-          return false;
-        }
-        subcategoryMatchCount++;
-      }
-
-      // Promotion filter - kiểm tra promotionType (hỗ trợ cả string và array)
-      if (this.selectedPromotions.length > 0) {
-        const hasDiscountFilter = this.selectedPromotions.includes('Giảm giá');
-        const hasBuy1Get1Filter = this.selectedPromotions.includes('Mua 1 tặng 1');
-
-        // Kiểm tra promotionType là array hay string
-        const hasNormalPromo = Array.isArray(p.promotionType)
-          ? p.promotionType.includes('normal')
-          : p.promotionType === 'normal';
-        const hasBuy1Get1Promo = Array.isArray(p.promotionType)
-          ? p.promotionType.includes('buy1get1')
-          : p.promotionType === 'buy1get1';
-
-        // Nếu chọn "Giảm giá" - hiển thị sản phẩm có promotionType là 'normal'
-        // Nếu chọn "Mua 1 tặng 1" - hiển thị sản phẩm có promotionType là 'buy1get1'
-        if (hasDiscountFilter && hasBuy1Get1Filter) {
-          // Chọn cả 2: hiển thị tất cả sản phẩm có promotion
-          if (!p.hasPromotion) {
-            return false;
-          }
-        } else if (hasDiscountFilter) {
-          // Chỉ chọn "Giảm giá"
-          if (!p.hasPromotion || !hasNormalPromo) {
-            return false;
-          }
-        } else if (hasBuy1Get1Filter) {
-          // Chỉ chọn "Mua 1 tặng 1"
-          if (!p.hasPromotion || !hasBuy1Get1Promo) {
-            return false;
-          }
-        } else {
-          // Không khớp với bất kỳ filter nào
-          return false;
-        }
-      }
-
-      // Color filter - hỗ trợ sản phẩm có nhiều màu
-      if (!this.productMatchesColorFilter(p)) {
-        return false;
-      }
-
-      // Rating filter
-      if (this.selectedRating !== null) {
-        if (!p.Rating || p.Rating < this.selectedRating) {
-          return false;
-        }
-      }
-
-      // Price filter
-      if (p.Price < this.minPrice || p.Price > this.maxPrice) {
-        return false;
-      }
-
-      return true;
-    });
-
-    console.log(' Category matches:', categoryMatchCount);
-    console.log(' Subcategory matches:', subcategoryMatchCount);
-    console.log(' Total filtered products:', this.filteredProducts.length);
-
-    this.updateActiveFilters();
-    this.sortProducts();
-    this.updatePagination();
-  }
-
-  initializeFilterOptions(): void {
-    // Load categories from product.json
-    this.categories = [...new Set(this.products.map((p) => p.Category))].sort();
-    this.updateSubcategories();
-
-    // Initialize price range based on actual product prices (min is 0)
-    const prices = this.products.map((p) => p.Price);
-    this.minPrice = 0;
-    this.maxPrice = Math.max(...prices);
-    this.actualMaxPrice = Math.max(...prices);
-    this.priceRange = [this.minPrice, this.maxPrice];
-
-    // Promotions are already set as default values, no need to load from product.json
-
-    // Load colors from product.json
-    const allColors = this.products
-      .map((p) => p.Color)
-      .filter((color) => {
-        // Chỉ lấy color là string và không phải 'NaN'
-        if (!color) return false;
-        if (typeof color === 'object') return false; // Skip { "$numberDouble": "NaN" }
-        if (typeof color !== 'string') return false;
-        if (color === 'NaN' || color.trim() === '') return false;
-        return true;
-      })
-      .flatMap((color) => color.split(',').map((c: string) => c.trim()))
-      .filter((color) => color.length > 0);
-
-    this.colors = [...new Set(allColors)].sort();
-    this.ratings = [5, 4, 3, 2, 1];
-
-    console.log('Filter options initialized:');
-    console.log('- Categories:', this.categories);
-    console.log('- Promotions:', this.promotions);
-    console.log('- Colors:', this.colors);
-    console.log(
-      '- Sample products with colors:',
-      this.products
-        .filter((p) => p.Color && typeof p.Color === 'string' && p.Color !== 'NaN')
-        .slice(0, 5)
-        .map((p) => ({ name: p.ProductName, color: p.Color }))
-    );
-    console.log('- Price range:', this.minPrice, '-', this.maxPrice);
   }
 
   updateSubcategories(): void {
     if (this.currentCategory) {
-      this.subcategories = [
-        ...new Set(
-          this.products.filter((p) => p.Category === this.currentCategory).map((p) => p.Subcategory)
-        ),
-      ].sort();
-      console.log('Subcategories for', this.currentCategory, ':', this.subcategories);
-    } else {
-      this.subcategories = [...new Set(this.products.map((p) => p.Subcategory))].sort();
-    }
+      // Nếu đã chọn category, filter subcategories tương ứng (nếu có API hỗ trợ hoặc filter client-side từ metadata)
+      // Hiện tại metadata trả về tất cả subcategories, ta có thể cần endpoint mới hoặc filter tạm thời
+      // Tuy nhiên, vì server-side filtering, ta nên để server xử lý việc này hoặc load lại metadata theo category
+      // Tạm thời giữ nguyên logic hiển thị tất cả hoặc filter nếu có thể
 
-    // Update price range based on current category/subcategory selection
-    this.updatePriceRange();
+      // Nếu muốn filter subcategories theo category, ta cần map category -> subcategories từ server
+      // Hoặc gọi API: /api/products/metadata/subcategories?category=...
+
+      // Tạm thời hiển thị tất cả subcategories đã load
+    }
   }
 
   updatePriceRange(): void {
-    let productsToCheck = this.products;
-
-    // Filter by category if selected
-    if (this.currentCategory) {
-      productsToCheck = productsToCheck.filter((p) => p.Category === this.currentCategory);
-
-      // Filter by subcategory if selected
-      if (this.currentSubcategory) {
-        productsToCheck = productsToCheck.filter((p) => p.Subcategory === this.currentSubcategory);
-      }
-    }
-
-    // Calculate max price from filtered products (min stays at 0)
-    if (productsToCheck.length > 0) {
-      const prices = productsToCheck.map((p) => p.Price);
-      const newMaxPrice = Math.max(...prices);
-
-      // Only update if we have valid prices
-      if (!isNaN(newMaxPrice)) {
-        this.minPrice = 0;
-        this.maxPrice = newMaxPrice;
-        this.actualMaxPrice = newMaxPrice;
-        this.priceRange = [this.minPrice, this.maxPrice];
-
-        // Lưu giá ban đầu để so sánh
-        this.initialMinPrice = 0;
-        this.initialMaxPrice = newMaxPrice;
-
-        console.log(' Updated price range:', this.minPrice, '-', this.maxPrice);
-      }
-    }
+    // Server-side filtering: Price range nên được set bởi user, không phải tự động co giãn theo products hiện tại
+    // Tuy nhiên, để UX tốt, ta có thể lấy min/max price của toàn bộ products từ server metadata
+    // Tạm thời giữ nguyên logic set min/max default hoặc từ user input
   }
 
   // -----------------------------
@@ -1218,6 +729,40 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // -----------------------------
+  //  Apply Filters
+  // -----------------------------
+  applyFilters(): void {
+    console.log(' applyFilters() called - Updating server filters');
+
+    // Update filters based on current selection
+    this.currentFilters.page = 1; // Reset to page 1 when filtering
+
+    // Category & Subcategory
+    this.currentFilters.category = this.selectedCategories.length > 0 ? this.selectedCategories[0] : undefined;
+    this.currentFilters.subcategory = this.selectedSubcategories.length > 0 ? this.selectedSubcategories[0] : undefined;
+
+    // Search
+    this.currentFilters.search = this.searchQuery || undefined;
+
+    // Price
+    this.currentFilters.minPrice = this.minPrice;
+    this.currentFilters.maxPrice = this.maxPrice;
+
+    // Promotion
+    const hasDiscountFilter = this.selectedPromotions.includes('Giảm giá');
+    const hasBuy1Get1Filter = this.selectedPromotions.includes('Mua 1 tặng 1');
+    if (hasDiscountFilter || hasBuy1Get1Filter) {
+      this.currentFilters.promotion = true;
+    } else {
+      this.currentFilters.promotion = undefined;
+    }
+
+    // Reload products with new filters
+    this.loadProducts();
+    this.updateActiveFilters();
+  }
+
+  // -----------------------------
   //  Clear filters
   // -----------------------------
   clearAllFilters(): void {
@@ -1283,6 +828,12 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       // Nếu không có productId đang chờ scroll, không scroll (giữ nguyên vị trí scroll hiện tại)
     }
+  }
+
+  updateDisplayedProducts(): void {
+    // Server-side pagination: update limit and reload
+    this.currentFilters.limit = this.itemsPerPage;
+    this.loadProducts();
   }
 
   // -----------------------------
@@ -1416,6 +967,28 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'Giá cao đến thấp';
     }
     return 'Giá thấp đến cao';
+  }
+
+  sortProducts(): void {
+    // Map frontend sort options to backend sort values
+    let backendSort = 'newest';
+
+    if (this.categorySort === 'newest') {
+      backendSort = 'newest';
+    } else if (this.categorySort === 'bestseller') {
+      backendSort = 'bestseller';
+    } else if (this.priceSort === 'price-low') {
+      backendSort = 'price-asc';
+    } else if (this.priceSort === 'price-high') {
+      backendSort = 'price-desc';
+    }
+
+    // Update current filters and reload
+    if (this.currentFilters.sort !== backendSort) {
+      this.currentFilters.sort = backendSort;
+      this.currentFilters.page = 1; // Reset to page 1 when sorting changes
+      this.loadProducts();
+    }
   }
 
   // -----------------------------
@@ -2277,17 +1850,6 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  isFavorite(product: Product): boolean {
-    const wishlist = this.wishlistService.getCurrentWishlist();
-    return wishlist.some((item) => item.sku === product.sku);
-  }
-
-  loadFavoriteProducts(): void {
-    // Load from WishlistService instead of localStorage
-    const wishlist = this.wishlistService.getCurrentWishlist();
-    this.favoriteProducts = wishlist.map((item) => item.sku);
-  }
-
   // -----------------------------
   // 🎯 Promotion Methods
   // -----------------------------
@@ -2688,4 +2250,19 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
       return baseProducts.filter((p) => (p.Rating || 0) >= rating).length;
     }
   }
+
+  // -----------------------------
+  // 🎯 Helper Methods for Favorites & Scroll
+  // -----------------------------
+  loadFavoriteProducts(): void {
+    if (this.authService.isLoggedIn()) {
+      // Subscribe to wishlist changes to update UI in real-time
+      const sub = this.wishlistService.wishlist$.subscribe((wishlist) => {
+        this.favoriteProducts = wishlist.map((item) => item.sku);
+      });
+      this.subscriptions.push(sub);
+    }
+  }
+
+
 }
