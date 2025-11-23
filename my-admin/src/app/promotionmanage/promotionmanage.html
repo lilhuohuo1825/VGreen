@@ -15,7 +15,7 @@
       <h1 class="page-title">DANH SÁCH KHUYẾN MÃI</h1>
     </div>
     <button class="btn-add-promotion" (click)="addPromotion()">
-      <img src="/asset/icons/plus.png" alt="Add">
+      <img src="/assets/icons/plus.png" alt="Add">
       <span>Thêm khuyến mãi</span>
     </button>
   </div>
@@ -59,7 +59,7 @@
         [(ngModel)]="searchQuery"
         (input)="searchPromotions($event)">
       <button class="search-btn">
-        <img src="/asset/icons/search_dark.png" alt="Search">
+        <img src="/assets/icons/search_dark.png" alt="Search">
       </button>
     </div>
 
@@ -68,17 +68,17 @@
       <span class="selected-count">{{selectedCount}} đã chọn</span>
       
       <button class="btn-action btn-edit" (click)="editPromotions()" [disabled]="selectedCount !== 1">
-        <img src="/asset/icons/edit_dark.png" alt="Edit">
+        <img src="/assets/icons/edit_dark.png" alt="Edit">
         <span>Chỉnh</span>
       </button>
       
       <button class="btn-action btn-delete" (click)="deletePromotions()" [disabled]="selectedCount === 0">
-        <img src="/asset/icons/trash_red.png" alt="Delete">
+        <img src="/assets/icons/trash_red.png" alt="Delete">
         <span>Xoá</span>
       </button>
       
       <button class="btn-action btn-group" (click)="openGroupModal()" [disabled]="selectedCount < 2">
-        <img src="/asset/icons/group.png" alt="Group">
+        <img src="/assets/icons/group.png" alt="Group">
         <span>Nhóm</span>
       </button>
       
@@ -97,7 +97,7 @@
                [class.active]="currentSortBy === 'updated'" 
                (click)="currentSortBy === 'updated' ? toggleSortOrder() : sortByUpdated('desc')">
             <div class="sort-option-icon">
-              <img src="/asset/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
+              <img src="/assets/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Ngày cập nhật</div>
@@ -116,7 +116,7 @@
                [class.active]="currentSortBy === 'usage'" 
                (click)="currentSortBy === 'usage' ? toggleSortOrder() : sortByUsage('desc')">
             <div class="sort-option-icon">
-              <img src="/asset/icons/price.png" alt="Usage" style="width: 24px; height: 24px;">
+              <img src="/assets/icons/price.png" alt="Usage" style="width: 24px; height: 24px;">
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Lượng sử dụng</div>

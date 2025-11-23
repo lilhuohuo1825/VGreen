@@ -50,16 +50,16 @@
         [(ngModel)]="searchQuery"
         (input)="onSearchChange()">
       <button class="search-btn">
-        <img src="/asset/icons/search_dark.png" alt="Search">
+        <img src="/assets/icons/search_dark.png" alt="Search">
       </button>
     </div>
     
     <!-- Filter Dropdown -->
     <div class="filter-container">
       <button class="filter-btn" (click)="toggleFilterDropdown(); $event.stopPropagation()">
-        <img src="/asset/icons/filter_dark.png" alt="Filter">
+        <img src="/assets/icons/filter_dark.png" alt="Filter">
         <span>{{ getFilterLabel(currentFilter) }}</span>
-        <img src="/asset/icons/arrowdown_lightgreen.png" alt="Arrow" class="arrow-icon" [class.rotated]="showFilterDropdown">
+        <img src="/assets/icons/arrowdown_lightgreen.png" alt="Arrow" class="arrow-icon" [class.rotated]="showFilterDropdown">
       </button>
       
       <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
@@ -114,7 +114,7 @@
         </div>
       </div>
       <div class="product-arrow">
-        <img src="/asset/icons/arrowright_lightgreen.png" alt="View" class="arrow-icon">
+        <img src="/assets/icons/arrowright_lightgreen.png" alt="View" class="arrow-icon">
       </div>
     </div>
 

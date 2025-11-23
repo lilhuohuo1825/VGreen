@@ -67,19 +67,19 @@
 
 @font-face {
   font-family: 'SF Pro';
-  src: url('/asset/font/sf_pro/SF-Pro-Display-Medium.otf') format('opentype');
+  src: url('/assets/font/sf_pro/SF-Pro-Display-Medium.otf') format('opentype');
   font-weight: 400;
 }
 
 @font-face {
   font-family: 'SF Pro';
-  src: url('/asset/font/sf_pro/SF-Pro-Display-Semibold.otf') format('opentype');
+  src: url('/assets/font/sf_pro/SF-Pro-Display-Semibold.otf') format('opentype');
   font-weight: 600;
 }
 
 @font-face {
   font-family: 'SF Pro';
-  src: url('/asset/font/sf_pro/SF-Pro-Display-Bold.otf') format('opentype');
+  src: url('/assets/font/sf_pro/SF-Pro-Display-Bold.otf') format('opentype');
   font-weight: 700;
 }
 

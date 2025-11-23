@@ -14,7 +14,7 @@
     <h1 class="page-title">HỒ SƠ KHÁCH HÀNG</h1>
     <div class="header-actions" *ngIf="!isEditMode">
       <button class="btn-edit-profile" (click)="toggleEditMode()">
-        <img src="/asset/icons/edit_dark.png" alt="Edit">
+        <img src="/assets/icons/edit_dark.png" alt="Edit">
         <span>Chỉnh sửa</span>
       </button>
     </div>
@@ -31,7 +31,7 @@
 
   <!-- Back Button -->
   <button class="btn-back" (click)="goBack()">
-    <img src="/asset/icons/arrowleft.png" alt="Back">
+    <img src="/assets/icons/arrowleft.png" alt="Back">
     <span>{{isEditMode ? 'Hủy chỉnh sửa' : 'Quay lại trang khách hàng'}}</span>
   </button>
 
@@ -45,7 +45,7 @@
         <!-- Avatar and Basic Info -->
         <div class="customer-header">
           <div class="avatar-container">
-            <img src="/asset/icons/customer_dark.png" alt="Avatar" class="avatar">
+            <img src="/assets/icons/customer_dark.png" alt="Avatar" class="avatar">
             <div class="vip-badge" *ngIf="customerData.customerType === 'VIP'">
               <span>★</span>
             </div>

@@ -864,7 +864,7 @@ export class OrderDetail implements OnInit, OnDestroy {
           name: item.productName || item.product_name || item.name || 'Sản phẩm',
           sku: item.sku || 'N/A',
           image:
-            item.image || productInfo?.image || productInfo?.Image?.[0] || '/asset/icons/image.png',
+            item.image || productInfo?.image || productInfo?.Image?.[0] || '/assets/icons/image.png',
           quantity: item.quantity || 1,
           price: item.price || 0,
           total: (item.price || 0) * (item.quantity || 1),
@@ -1210,7 +1210,7 @@ export class OrderDetail implements OnInit, OnDestroy {
         return {
           name: product.product_name,
           sku: productInfo?.SKU ? 'SKU-' + productInfo.SKU : 'SKU-' + product.product_id,
-          image: productInfo?.Image || '/asset/icons/image.png', // Use real image or fallback
+          image: productInfo?.Image || '/assets/icons/image.png', // Use real image or fallback
           quantity: product.quantity,
           price: product.price,
           total: product.subtotal,
@@ -1224,7 +1224,7 @@ export class OrderDetail implements OnInit, OnDestroy {
         {
           name: 'Tên sản phẩm',
           sku: 'SKU',
-          image: '/asset/icons/image.png',
+          image: '/assets/icons/image.png',
           quantity: 1,
           price: this.order.total_amount || this.order.order_total || 0,
           total: this.order.total_amount || this.order.order_total || 0,
@@ -1838,7 +1838,7 @@ export class OrderDetail implements OnInit, OnDestroy {
     console.log('Selected product:', product);
 
     // Map product data to order item format
-    const productImage = product.Image?.[0] || product.image || '/asset/icons/shop.png';
+    const productImage = product.Image?.[0] || product.image || '/assets/icons/shop.png';
     const productName = product.product_name || product.productName || 'Sản phẩm';
     const productSku = product.sku || 'SKU';
     const productPrice = product.price || product.ProductPrice || 0;

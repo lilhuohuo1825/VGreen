@@ -4,7 +4,7 @@
   <header class="top-header-bar">
     <div class="top-header-left">
       <button class="menu-toggle-btn" (click)="toggleSidebarCollapse()">
-        <img src="/asset/icons/list.png" alt="Menu" />
+        <img src="/assets/icons/list.png" alt="Menu" />
       </button>
     </div>
 
@@ -27,7 +27,7 @@
         (mouseleave)="showNotificationDropdown = false"
       >
         <button class="top-icon-btn notification-btn" [class.active]="showNotificationDropdown">
-          <img src="/asset/icons/notice.png" alt="Notifications" />
+          <img src="/assets/icons/notice.png" alt="Notifications" />
           <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
         </button>
 
@@ -64,7 +64,7 @@
                   <img
                     [src]="getNotificationIcon(notification)"
                     alt="Notification"
-                    onerror="this.src='/asset/icons/order.png'"
+                    onerror="this.src='/assets/icons/order.png'"
                   />
                 </div>
                 <div class="notification-content">
@@ -108,7 +108,7 @@
           [class.clickable]="!isAuthenticated()"
           [class.active]="showUserDropdown"
         >
-          <img src="/asset/icons/person.png" alt="Admin" class="top-avatar" />
+          <img src="/assets/icons/person.png" alt="Admin" class="top-avatar" />
           <span class="user-name">{{ userDisplayName() }}</span>
         </div>
 
@@ -120,7 +120,7 @@
         >
           <div class="user-dropdown-header">
             <div class="user-dropdown-info">
-              <img src="/asset/icons/person.png" alt="Admin" class="user-dropdown-avatar" />
+              <img src="/assets/icons/person.png" alt="Admin" class="user-dropdown-avatar" />
               <div class="user-dropdown-details">
                 <p class="user-dropdown-name">{{ userDisplayName() }}</p>
                 <p class="user-dropdown-email">{{ currentUser()?.email }}</p>
@@ -130,7 +130,7 @@
 
           <div class="user-dropdown-body">
             <button class="user-dropdown-item logout-item" (click)="logout()">
-              <img src="/asset/icons/logout_dark.png" alt="Logout" class="logout-icon" />
+              <img src="/assets/icons/logout_dark.png" alt="Logout" class="logout-icon" />
               <span class="logout-text">Đăng xuất</span>
             </button>
           </div>
@@ -153,49 +153,49 @@
               class="menu-link"
               [routerLinkActiveOptions]="{ exact: true }"
             >
-              <img src="/asset/icons/home.png" alt="Dashboard" class="menu-icon" />
+              <img src="/assets/icons/home.png" alt="Dashboard" class="menu-icon" />
               <span class="menu-text">Tổng quan</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/orders'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/order.png" alt="Orders" class="menu-icon" />
+              <img src="/assets/icons/order.png" alt="Orders" class="menu-icon" />
               <span class="menu-text">Đơn hàng</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/products'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/shop.png" alt="Products" class="menu-icon" />
+              <img src="/assets/icons/shop.png" alt="Products" class="menu-icon" />
               <span class="menu-text">Sản phẩm</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/customers'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/customer.png" alt="Customers" class="menu-icon" />
+              <img src="/assets/icons/customer.png" alt="Customers" class="menu-icon" />
               <span class="menu-text">Khách hàng</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/posts'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/edit.png" alt="Posts" class="menu-icon" />
+              <img src="/assets/icons/edit.png" alt="Posts" class="menu-icon" />
               <span class="menu-text">Bài viết</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/promotions'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/promotion.png" alt="Promotions" class="menu-icon" />
+              <img src="/assets/icons/promotion.png" alt="Promotions" class="menu-icon" />
               <span class="menu-text">Khuyến mãi</span>
             </a>
           </li>
 
           <li class="menu-item">
             <a [routerLink]="'/consultations'" routerLinkActive="active" class="menu-link">
-              <img src="/asset/icons/clinical_notes.png" alt="Consultations" class="menu-icon" />
+              <img src="/assets/icons/clinical_notes.png" alt="Consultations" class="menu-icon" />
               <span class="menu-text">Tư vấn</span>
             </a>
           </li>
@@ -254,7 +254,7 @@
     </button>
 
     <div class="new-order-popup-icon">
-      <img src="/asset/icons/order.png" alt="New Order" class="new-order-icon-img" />
+      <img src="/assets/icons/order.png" alt="New Order" class="new-order-icon-img" />
     </div>
 
     <h3 class="new-order-popup-title">{{ getNotificationTitle(newOrderNotification) }}</h3>
@@ -298,7 +298,7 @@
     </button>
 
     <div class="pending-orders-notification-icon">
-      <img src="/asset/icons/order.png" alt="Pending Orders" class="pending-orders-icon-img" />
+      <img src="/assets/icons/order.png" alt="Pending Orders" class="pending-orders-icon-img" />
     </div>
 
     <!-- <h3 class="pending-orders-notification-title">Có đơn hàng đang chờ xác nhận</h3> -->

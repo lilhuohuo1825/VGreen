@@ -18,11 +18,11 @@
     </h1>
     <div class="header-actions" *ngIf="!isNewOrder && !isEditMode">
       <button class="btn-edit-order" (click)="enterEditMode()">
-        <img src="/asset/icons/edit.png" alt="Edit" />
+        <img src="/assets/icons/edit.png" alt="Edit" />
         <span>Chỉnh sửa</span>
       </button>
       <button class="btn-print" (click)="printOrder()">
-        <img src="/asset/icons/print.png" alt="Print" />
+        <img src="/assets/icons/print.png" alt="Print" />
         <span>In đơn hàng</span>
       </button>
     </div>
@@ -30,7 +30,7 @@
 
   <!-- Back Button -->
   <button class="btn-back" (click)="goBack()">
-    <img src="/asset/icons/arrowleft.png" alt="Back" />
+    <img src="/assets/icons/arrowleft.png" alt="Back" />
     <span>{{ backButtonText }}</span>
   </button>
 
@@ -104,7 +104,7 @@
               *ngIf="isNewOrder || isEditMode"
               (click)="addProductToOrder()"
             >
-              <img src="/asset/icons/plus.png" alt="Add" />
+              <img src="/assets/icons/plus.png" alt="Add" />
               <span>Thêm sản phẩm</span>
             </button>
           </div>
@@ -179,7 +179,7 @@
                 </td>
                 <td class="col-actions" *ngIf="isNewOrder || isEditMode">
                   <button class="btn-remove-item" (click)="removeProductFromOrder(i)">
-                    <img src="/asset/icons/trash_red.png" alt="Remove" />
+                    <img src="/assets/icons/trash_red.png" alt="Remove" />
                   </button>
                 </td>
               </tr>
@@ -230,7 +230,7 @@
                 (blur)="searchCustomerById()"
               />
               <button class="btn-search-customer" (click)="searchCustomerById()" type="button">
-                <img src="/asset/icons/search.png" alt="Search" style="width: 16px; height: 16px" />
+                <img src="/assets/icons/search.png" alt="Search" style="width: 16px; height: 16px" />
               </button>
             </div>
             <div class="info-value" *ngIf="!isNewOrder && !isEditMode">
@@ -866,9 +866,9 @@
         >
           <div class="product-modal-item-image">
             <img
-              [src]="product.Image?.[0] || product.image || '/asset/icons/shop.png'"
+              [src]="product.Image?.[0] || product.image || '/assets/icons/shop.png'"
               alt="Product"
-              onerror="this.src='/asset/icons/shop.png'"
+              onerror="this.src='/assets/icons/shop.png'"
             />
           </div>
           <div class="product-modal-item-info">
@@ -882,7 +882,7 @@
             {{ formatCurrency(product.price || product.ProductPrice || 0) }}
           </div>
           <div class="product-modal-item-action">
-            <img src="/asset/icons/plus.png" alt="Add" class="add-icon" />
+            <img src="/assets/icons/plus.png" alt="Add" class="add-icon" />
           </div>
         </div>
       </div>

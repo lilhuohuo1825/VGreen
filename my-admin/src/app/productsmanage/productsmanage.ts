@@ -1425,7 +1425,7 @@ export class ProductsManage implements OnInit {
    */
   handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    img.src = '/asset/icons/shop.png'; // Fallback image
+    img.src = '/assets/icons/shop.png'; // Fallback image
   }
 
   /**

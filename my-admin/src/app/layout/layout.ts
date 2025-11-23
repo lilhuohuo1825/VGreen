@@ -432,17 +432,17 @@ export class Layout implements OnInit, OnDestroy {
   getNotificationIcon(notification: AdminNotification): string {
     switch (notification.type) {
       case 'order_cancellation_request':
-        return '/asset/icons/trash_red.png';
+        return '/assets/icons/trash_red.png';
       case 'new_order':
-        return '/asset/icons/order.png';
+        return '/assets/icons/order.png';
       case 'return_request':
-        return '/asset/icons/return.png';
+        return '/assets/icons/return.png';
       case 'consultation':
-        return '/asset/icons/edit.png';
+        return '/assets/icons/edit.png';
       case 'system':
-        return '/asset/icons/info.png';
+        return '/assets/icons/info.png';
       default:
-        return '/asset/icons/order.png';
+        return '/assets/icons/order.png';
     }
   }
 

@@ -11,7 +11,7 @@
 
   <!-- Back Link -->
   <button class="btn-back" (click)="goBack()">
-    <img src="/asset/icons/arrowleft.png" alt="Back" />
+    <img src="/assets/icons/arrowleft.png" alt="Back" />
     <span>Quay lại trang quản lý tư vấn</span>
   </button>
 
@@ -66,17 +66,17 @@
         (input)="onSearchChange()"
       />
       <button class="search-btn">
-        <img src="/asset/icons/search_dark.png" alt="Search" />
+        <img src="/assets/icons/search_dark.png" alt="Search" />
       </button>
     </div>
 
     <!-- Filter Dropdown -->
     <div class="filter-container">
       <button class="filter-btn" (click)="toggleFilterDropdown(); $event.stopPropagation()">
-        <img src="/asset/icons/filter_dark.png" alt="Filter" />
+        <img src="/assets/icons/filter_dark.png" alt="Filter" />
         <span>{{ getFilterLabel(currentFilter) }}</span>
         <img
-          src="/asset/icons/arrowdown_lightgreen.png"
+          src="/assets/icons/arrowdown_lightgreen.png"
           alt="Arrow"
           class="arrow-icon"
           [class.rotated]="showFilterDropdown"
@@ -189,7 +189,7 @@
     <div class="load-more-questions" *ngIf="hasMoreQuestions()">
       <button class="btn-load-more" (click)="toggleExpandQuestions()">
         <span>Xem thêm {{ getRemainingQuestionsCount() }} câu hỏi</span>
-        <img src="/asset/icons/arrowdown_lightgreen.png" alt="Expand" class="expand-icon" />
+        <img src="/assets/icons/arrowdown_lightgreen.png" alt="Expand" class="expand-icon" />
       </button>
     </div>
 
@@ -200,7 +200,7 @@
     >
       <button class="btn-collapse" (click)="toggleExpandQuestions()">
         <span>Thu gọn</span>
-        <img src="/asset/icons/arrowdown_lightgreen.png" alt="Collapse" class="collapse-icon" />
+        <img src="/assets/icons/arrowdown_lightgreen.png" alt="Collapse" class="collapse-icon" />
       </button>
     </div>
 

@@ -18,7 +18,7 @@
       </p>
     </div>
     <button class="btn-add-product" (click)="addProduct()">
-      <img src="/asset/icons/plus.png" alt="Add">
+      <img src="/assets/icons/plus.png" alt="Add">
       <span>Thêm sản phẩm</span>
     </button>
   </div>
@@ -31,14 +31,14 @@
       <div class="search-container">
         <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm..." (input)="searchProducts($event)">
         <button class="search-btn">
-          <img src="/asset/icons/search_dark.png" alt="Search">
+          <img src="/assets/icons/search_dark.png" alt="Search">
         </button>
       </div>
       
       <span class="selected-count">{{selectedCount}} đã chọn</span>
       
       <button class="btn-action btn-edit" (click)="editProducts()" [disabled]="selectedCount !== 1">
-        <img src="/asset/icons/edit_dark.png" alt="Edit">
+        <img src="/assets/icons/edit_dark.png" alt="Edit">
         <span>Chỉnh</span>
       </button>
       
@@ -48,19 +48,19 @@
         [disabled]="selectedCount === 0"
         (click)="deleteProducts(); $event.stopPropagation(); $event.preventDefault()" 
         type="button">
-        <img src="/asset/icons/trash_red.png" alt="Delete">
+        <img src="/assets/icons/trash_red.png" alt="Delete">
         <span>Xoá</span>
       </button>
       
       <button class="btn-action btn-group" (click)="openGroupModal()" [disabled]="selectedCount < 2">
-        <img src="/asset/icons/group.png" alt="Group">
+        <img src="/assets/icons/group.png" alt="Group">
         <span>Nhóm</span>
       </button>
       
       <!-- Filter Dropdown -->
         <div class="dropdown-container">
           <button class="btn-action btn-filter" [class.active]="showFilterDropdown" (click)="toggleFilterDropdown($event)">
-            <img src="/asset/icons/filter_dark.png" alt="Filter">
+            <img src="/assets/icons/filter_dark.png" alt="Filter">
             <span>Lọc {{showFilterDropdown ? '✓' : ''}}</span>
             <span class="dropdown-arrow">▼</span>
           </button>
@@ -68,7 +68,7 @@
             <!-- Stock Status with Submenu -->
             <div class="dropdown-item-parent">
               <div class="dropdown-item">
-                <img src="/asset/icons/storage.png" alt="Stock" class="item-icon">
+                <img src="/assets/icons/storage.png" alt="Stock" class="item-icon">
                 <span>Tồn kho</span>
                 <span class="arrow-right">›</span>
               </div>
@@ -91,7 +91,7 @@
             <!-- Rating with Submenu -->
             <div class="dropdown-item-parent">
               <div class="dropdown-item">
-                <img src="/asset/icons/star_dark.png" alt="Rating" class="item-icon">
+                <img src="/assets/icons/star_dark.png" alt="Rating" class="item-icon">
                 <span>Đánh giá</span>
                 <span class="arrow-right">›</span>
               </div>
@@ -106,7 +106,7 @@
             <!-- Category with Submenu -->
             <div class="dropdown-item-parent" *ngIf="availableCategories.length > 0">
               <div class="dropdown-item">
-                <img src="/asset/icons/category.png" alt="Category" class="item-icon">
+                <img src="/assets/icons/category.png" alt="Category" class="item-icon">
                 <span>Phân loại</span>
                 <span class="arrow-right">›</span>
               </div>
@@ -121,7 +121,7 @@
             <!-- Group with Submenu -->
             <div class="dropdown-item-parent">
               <div class="dropdown-item">
-                <img src="/asset/icons/group.png" alt="Group" class="item-icon">
+                <img src="/assets/icons/group.png" alt="Group" class="item-icon">
                 <span>Nhóm sản phẩm</span>
                 <span class="arrow-right">›</span>
               </div>
@@ -133,7 +133,7 @@
               </div>
               <div class="dropdown-submenu" *ngIf="allGroupNames.length === 0">
                 <div class="dropdown-empty">
-                  <img src="/asset/icons/group.png" alt="Group" class="empty-icon" style="width: 20px; height: 20px;">
+                  <img src="/assets/icons/group.png" alt="Group" class="empty-icon" style="width: 20px; height: 20px;">
                   <span>Chưa có nhóm nào</span>
                 </div>
               </div>
@@ -142,7 +142,7 @@
             <div class="dropdown-divider"></div>
             <div class="dropdown-actions">
               <button class="btn-clear-filter" (click)="clearFilters()">
-                <img src="/asset/icons/trash_red.png" alt="Clear Filter" style="width: 16px; height: 16px;">
+                <img src="/assets/icons/trash_red.png" alt="Clear Filter" style="width: 16px; height: 16px;">
                 <span>Xóa bộ lọc</span>
               </button>
             </div>
@@ -162,7 +162,7 @@
                  [class.active]="currentSortField === 'name'" 
                  (click)="sortBy('name')">
               <div class="sort-option-icon">
-                <img src="/asset/icons/name.png" alt="Name" style="width: 24px; height: 24px;">
+                <img src="/assets/icons/name.png" alt="Name" style="width: 24px; height: 24px;">
               </div>
               <div class="sort-option-content">
                 <div class="sort-option-label">Tên sản phẩm</div>
@@ -180,7 +180,7 @@
                  [class.active]="currentSortField === 'price'" 
                  (click)="sortBy('price')">
               <div class="sort-option-icon">
-                <img src="/asset/icons/price.png" alt="Price" style="width: 24px; height: 24px;">
+                <img src="/assets/icons/price.png" alt="Price" style="width: 24px; height: 24px;">
               </div>
               <div class="sort-option-content">
                 <div class="sort-option-label">Giá</div>
@@ -198,7 +198,7 @@
                  [class.active]="currentSortField === 'stock'" 
                  (click)="sortBy('stock')">
               <div class="sort-option-icon">
-                <img src="/asset/icons/storage.png" alt="Stock" style="width: 24px; height: 24px;">
+                <img src="/assets/icons/storage.png" alt="Stock" style="width: 24px; height: 24px;">
               </div>
               <div class="sort-option-content">
                 <div class="sort-option-label">Tồn kho</div>
@@ -216,7 +216,7 @@
                  [class.active]="currentSortField === 'rating'" 
                  (click)="sortBy('rating')">
               <div class="sort-option-icon">
-                <img src="/asset/icons/star_dark.png" alt="Rating" style="width: 24px; height: 24px;">
+                <img src="/assets/icons/star_dark.png" alt="Rating" style="width: 24px; height: 24px;">
               </div>
               <div class="sort-option-content">
                 <div class="sort-option-label">Đánh giá</div>
@@ -234,7 +234,7 @@
                  [class.active]="currentSortField === 'updated'" 
                  (click)="sortBy('updated')">
               <div class="sort-option-icon">
-                <img src="/asset/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
+                <img src="/assets/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
               </div>
               <div class="sort-option-content">
                 <div class="sort-option-label">Ngày cập nhật</div>
@@ -297,9 +297,9 @@
           <td class="col-name clickable" (click)="viewProductDetail(product)">
             <div class="product-info">
               <div class="product-image">
-                <img [src]="product.image || '/asset/icons/shop.png'" 
+                <img [src]="product.image || '/assets/icons/shop.png'" 
                      [alt]="product.name"
-                     (error)="$any($event.target).src='/asset/icons/shop.png'">
+                     (error)="$any($event.target).src='/assets/icons/shop.png'">
               </div>
               <div class="product-details">
                 <div class="product-name">{{product.name}}</div>
@@ -340,7 +340,7 @@
     <div class="modal-header">
       <div class="modal-title-section">
         <button class="btn-back" (click)="closeProductForm()">
-          <img src="/asset/icons/arrowleft_dark.png" alt="Back">
+          <img src="/assets/icons/arrowleft_dark.png" alt="Back">
           <span>Quay lại trang sản phẩm</span>
         </button>
         <h2 class="modal-title">{{currentProduct.name ? currentProduct.name.toUpperCase() : ''}}</h2>
@@ -385,7 +385,7 @@
                 <option value="">Chọn phân loại...</option>
                 <option *ngFor="let cat of availableCategories" [value]="cat">{{cat}}</option>
               </select>
-              <img src="/asset/icons/arrowdown.png" alt="Dropdown" class="select-icon">
+              <img src="/assets/icons/arrowdown.png" alt="Dropdown" class="select-icon">
             </div>
           </div>
         </div>
@@ -404,7 +404,7 @@
                 <option value="">Chọn phân loại phụ...</option>
                 <option *ngFor="let subcat of formSubcategories" [value]="subcat">{{subcat}}</option>
               </select>
-              <img src="/asset/icons/arrowdown.png" alt="Dropdown" class="select-icon">
+              <img src="/assets/icons/arrowdown.png" alt="Dropdown" class="select-icon">
             </div>
           </div>
           <div class="form-group">
@@ -477,7 +477,7 @@
               <option value="">Chọn màu sắc...</option>
               <option *ngFor="let color of availableColors" [value]="color">{{color}}</option>
             </select>
-            <img src="/asset/icons/arrowdown.png" alt="Dropdown" class="select-icon">
+            <img src="/assets/icons/arrowdown.png" alt="Dropdown" class="select-icon">
           </div>
         </div>
 
@@ -518,7 +518,7 @@
           <!-- Current Groups -->
           <div class="groups-container" *ngIf="currentProduct.groups && currentProduct.groups.length > 0">
             <div class="group-tag" *ngFor="let group of currentProduct.groups">
-              <img src="/asset/icons/group.png" alt="Group" class="group-icon" style="width: 16px; height: 16px;">
+              <img src="/assets/icons/group.png" alt="Group" class="group-icon" style="width: 16px; height: 16px;">
               <span class="group-name">{{group}}</span>
               <button type="button" class="group-remove" (click)="removeGroupFromProduct(group)">×</button>
             </div>
@@ -544,7 +544,7 @@
           <!-- Empty State -->
           <div class="group-empty-state" *ngIf="allGroupNames.length === 0">
             <p class="empty-state-text">
-              <img src="/asset/icons/group.png" alt="Group" class="empty-icon" style="width: 20px; height: 20px;">
+              <img src="/assets/icons/group.png" alt="Group" class="empty-icon" style="width: 20px; height: 20px;">
               Chưa có nhóm nào. Hãy chọn nhiều sản phẩm và dùng chức năng "Nhóm" để tạo nhóm mới.
             </p>
           </div>
@@ -558,7 +558,7 @@
               <input type="file" [id]="'file-upload-' + i" class="file-input" accept="image/*" (change)="onImageSelect($event, i)">
               <label [for]="'file-upload-' + i" class="upload-label">
                 <img *ngIf="img" [src]="img" [alt]="'Product image ' + (i + 1)" class="product-image-preview" (error)="handleImageError($event)">
-                <img *ngIf="!img" src="/asset/icons/camera_dark.png" alt="Upload" class="upload-icon">
+                <img *ngIf="!img" src="/assets/icons/camera_dark.png" alt="Upload" class="upload-icon">
               </label>
               <button *ngIf="img" type="button" class="remove-image-btn" (click)="removeImage(i)" title="Xóa hình ảnh">×</button>
             </div>
@@ -602,7 +602,7 @@
   <div class="group-modal-content" (click)="$event.stopPropagation()">
     <div class="group-modal-header">
       <h3 class="group-modal-title">
-        <img src="/asset/icons/group.png" alt="Group" class="title-icon" style="width: 20px; height: 20px;">
+        <img src="/assets/icons/group.png" alt="Group" class="title-icon" style="width: 20px; height: 20px;">
         Tạo nhóm sản phẩm
       </h3>
       <button class="btn-close-modal" (click)="closeGroupModal()">×</button>

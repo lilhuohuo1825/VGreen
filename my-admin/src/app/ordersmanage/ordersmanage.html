@@ -14,7 +14,7 @@
     <h1 class="page-title">DANH SÁCH ĐƠN HÀNG</h1>
     <div class="header-actions">
       <button class="btn-add-order" (click)="addOrder()">
-        <img src="/asset/icons/plus.png" alt="Add" />
+        <img src="/assets/icons/plus.png" alt="Add" />
         <span>Thêm đơn hàng</span>
       </button>
     </div>
@@ -91,14 +91,14 @@
           (input)="searchOrders($event)"
         />
         <button class="search-btn">
-          <img src="/asset/icons/search_dark.png" alt="Search" />
+          <img src="/assets/icons/search_dark.png" alt="Search" />
         </button>
       </div>
 
       <span class="selected-count">{{ selectedCount }} đã chọn</span>
 
       <button class="btn-action btn-edit" (click)="editOrders()" [disabled]="selectedCount !== 1">
-        <img src="/asset/icons/edit_dark.png" alt="Edit" />
+        <img src="/assets/icons/edit_dark.png" alt="Edit" />
         <span>Chỉnh</span>
       </button>
 
@@ -107,7 +107,7 @@
         (click)="deleteOrders()"
         [disabled]="selectedCount === 0"
       >
-        <img src="/asset/icons/trash_red.png" alt="Delete" />
+        <img src="/assets/icons/trash_red.png" alt="Delete" />
         <span>Xóa</span>
       </button>
 
@@ -117,7 +117,7 @@
           [class.active]="showFilterDropdown"
           (click)="toggleFilterDropdown($event)"
         >
-          <img src="/asset/icons/filter_dark.png" alt="Filter" />
+          <img src="/assets/icons/filter_dark.png" alt="Filter" />
           <span>Lọc {{ showFilterDropdown ? '✓' : '' }}</span>
           <span class="dropdown-arrow">▼</span>
         </button>
@@ -130,7 +130,7 @@
           <!-- Trạng thái đơn hàng with Submenu -->
           <div class="dropdown-item-parent">
             <div class="dropdown-item">
-              <img src="/asset/icons/order_dark.png" alt="Status" class="item-icon" />
+              <img src="/assets/icons/order_dark.png" alt="Status" class="item-icon" />
               <span>Trạng thái đơn hàng</span>
               <span class="arrow-right">›</span>
             </div>
@@ -189,7 +189,7 @@
           <!-- Thanh toán with Submenu -->
           <div class="dropdown-item-parent">
             <div class="dropdown-item">
-              <img src="/asset/icons/payment.jpg" alt="Payment" class="item-icon" />
+              <img src="/assets/icons/payment.jpg" alt="Payment" class="item-icon" />
               <span>Thanh toán</span>
               <span class="arrow-right">›</span>
             </div>
@@ -216,7 +216,7 @@
           <!-- Giao hàng with Submenu -->
           <div class="dropdown-item-parent">
             <div class="dropdown-item">
-              <img src="/asset/icons/logistic_dark.png" alt="Delivery" class="item-icon" />
+              <img src="/assets/icons/logistic_dark.png" alt="Delivery" class="item-icon" />
               <span>Giao hàng</span>
               <span class="arrow-right">›</span>
             </div>
@@ -252,7 +252,7 @@
           <div class="dropdown-actions">
             <button class="btn-clear-filter" (click)="applyFilterAndClose('all')">
               <img
-                src="/asset/icons/trash_red.png"
+                src="/assets/icons/trash_red.png"
                 alt="Clear Filter"
                 style="width: 16px; height: 16px"
               />
@@ -286,7 +286,7 @@
             (click)="currentSortBy === 'date' ? toggleSortOrder() : sortByDate('desc')"
           >
             <div class="sort-option-icon">
-              <img src="/asset/icons/calendar.png" alt="Date" style="width: 24px; height: 24px" />
+              <img src="/assets/icons/calendar.png" alt="Date" style="width: 24px; height: 24px" />
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Ngày cập nhật</div>
@@ -310,7 +310,7 @@
             (click)="currentSortBy === 'price' ? toggleSortOrder() : sortByPrice('desc')"
           >
             <div class="sort-option-icon">
-              <img src="/asset/icons/price.png" alt="Price" style="width: 24px; height: 24px" />
+              <img src="/assets/icons/price.png" alt="Price" style="width: 24px; height: 24px" />
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Giá</div>

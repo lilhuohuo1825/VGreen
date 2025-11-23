@@ -21,7 +21,7 @@
       </p>
     </div>
     <button class="btn-add-blog" (click)="addNewBlog()">
-      <img src="/asset/icons/plus.png" alt="Add">
+      <img src="/assets/icons/plus.png" alt="Add">
       <span>Thêm bài viết</span>
     </button>
   </div>
@@ -34,19 +34,19 @@
       <div class="search-container">
         <input type="text" class="search-input" placeholder="Tìm kiếm" [(ngModel)]="searchQuery" (input)="searchBlogs($event)">
         <button class="search-btn">
-          <img src="/asset/icons/search_dark.png" alt="Search">
+          <img src="/assets/icons/search_dark.png" alt="Search">
         </button>
       </div>
       
       <span class="selected-count">{{selectedCount}} đã chọn</span>
       
       <button class="btn-action btn-edit" (click)="editBlogs()" [disabled]="selectedCount === 0">
-        <img src="/asset/icons/edit_dark.png" alt="Edit">
+        <img src="/assets/icons/edit_dark.png" alt="Edit">
         <span>Chỉnh</span>
       </button>
       
       <button class="btn-action btn-delete" (click)="deleteBlogs()" [disabled]="selectedCount === 0">
-        <img src="/asset/icons/trash_red.png" alt="Delete">
+        <img src="/assets/icons/trash_red.png" alt="Delete">
         <span>Xoá</span>
       </button>
       
@@ -65,7 +65,7 @@
                [class.active]="currentSortBy === 'date'" 
                (click)="currentSortBy === 'date' ? toggleSortOrder() : sortByDate('desc')">
             <div class="sort-option-icon">
-              <img src="/asset/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
+              <img src="/assets/icons/calendar.png" alt="Calendar" style="width: 24px; height: 24px;">
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Ngày cập nhật</div>
@@ -84,7 +84,7 @@
                [class.active]="currentSortBy === 'views'" 
                (click)="currentSortBy === 'views' ? toggleSortOrder() : sortByViews('desc')">
             <div class="sort-option-icon">
-              <img src="/asset/icons/eye_show_dark.png" alt="Views" style="width: 24px; height: 24px;">
+              <img src="/assets/icons/eye_show_dark.png" alt="Views" style="width: 24px; height: 24px;">
             </div>
             <div class="sort-option-content">
               <div class="sort-option-label">Lượt xem</div>
@@ -172,7 +172,7 @@
   <div class="blog-detail-container" *ngIf="viewMode === 'detail' && currentBlog">
     <!-- Back Button at Top -->
     <button class="btn-back-top" (click)="backToList()">
-      <img src="/asset/icons/arrowleft_dark.png" alt="Back">
+      <img src="/assets/icons/arrowleft_dark.png" alt="Back">
       <span>Quay lại danh sách</span>
     </button>
 
@@ -191,12 +191,12 @@
         <!-- Left: Preview Card -->
         <div class="blog-preview-card">
           <button class="btn-edit-icon" title="Chỉnh sửa" (click)="openEditPopup()">
-            <img src="/asset/icons/edit_dark.png" alt="Edit">
+            <img src="/assets/icons/edit_dark.png" alt="Edit">
           </button>
           
           <div class="preview-layout">
             <div class="preview-avatar">
-              <img src="/asset/icons/avatar_dark.png" alt="Author">
+              <img src="/assets/icons/avatar_dark.png" alt="Author">
             </div>
             
             <div class="preview-info">
@@ -224,11 +224,11 @@
         <!-- Right: Action Buttons -->
         <div class="blog-actions">
           <button class="btn-delete-blog" (click)="deleteCurrentBlog()" *ngIf="!isNewBlog">
-            <img src="/asset/icons/trash_red.png" alt="Delete">
+            <img src="/assets/icons/trash_red.png" alt="Delete">
             <span>Xóa bài viết</span>
           </button>
           <button class="btn-save-blog" (click)="saveCurrentBlog()">
-            <img src="/asset/icons/edit.png" alt="Save">
+            <img src="/assets/icons/edit.png" alt="Save">
             <span>{{ isNewBlog ? 'Thêm bài viết' : 'Lưu bài viết' }}</span>
           </button>
         </div>
@@ -438,7 +438,7 @@
           <h2 class="popup-title" *ngIf="!isNewBlog">Chỉnh sửa thông tin bài viết</h2>
           <h2 class="popup-title" *ngIf="isNewBlog">Thêm bài viết mới</h2>
           <button class="popup-close-btn" (click)="closeEditPopup()">
-            <img src="/asset/icons/clear_dark.png" alt="Close">
+            <img src="/assets/icons/clear_dark.png" alt="Close">
           </button>
         </div>
 
@@ -495,7 +495,7 @@
                 readonly
               >
               <img 
-                src="/asset/icons/calender_dark.png" 
+                src="/assets/icons/calender_dark.png" 
                 alt="Calendar" 
                 class="input-icon" 
                 (click)="openDatePicker()"
@@ -535,7 +535,7 @@
               <select class="form-select-dark" [(ngModel)]="currentBlog.category">
                 <option *ngFor="let cat of blogCategories" [value]="cat">{{ cat }}</option>
               </select>
-              <img src="/asset/icons/arrowdown.png" alt="Dropdown" class="select-icon">
+              <img src="/assets/icons/arrowdown.png" alt="Dropdown" class="select-icon">
             </div>
           </div>
 
