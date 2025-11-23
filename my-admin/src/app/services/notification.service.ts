@@ -1,20 +1,27 @@
-_id ?: string;
-id ?: string;
-type: 'order_cancellation_request' | 'new_order' | 'return_request' | 'consultation' | 'system' | 'other';
-customerId ?: string;
-customerName ?: string;
-orderId ?: string;
-orderTotal ?: number;
-reason ?: string;
-title ?: string;
-message ?: string;
-sku ?: string;
-productName ?: string;
-questionId ?: string;
-status: 'pending' | 'approved' | 'rejected' | 'active';
-read: boolean;
-createdAt: Date | string;
-updatedAt ?: Date | string;
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, interval, of } from 'rxjs';
+import { catchError, startWith, switchMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
+export interface AdminNotification {
+  _id?: string;
+  id?: string;
+  type: 'order_cancellation_request' | 'new_order' | 'return_request' | 'consultation' | 'system' | 'other';
+  customerId?: string;
+  customerName?: string;
+  orderId?: string;
+  orderTotal?: number;
+  reason?: string;
+  title?: string;
+  message?: string;
+  sku?: string;
+  productName?: string;
+  questionId?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'active';
+  read: boolean;
+  createdAt: Date | string;
+  updatedAt?: Date | string;
 }
 
 @Injectable({
