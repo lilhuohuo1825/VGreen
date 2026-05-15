@@ -39,3 +39,4 @@ backend/server.log
 *.swp
 *.swo
 *~
+.vercel
