@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "installCommand": "npm install && cd my-user && npm install --force",
+  "buildCommand": "cd my-user && npm run build",
+  "outputDirectory": "my-user/dist/my-user/browser",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://vgreen.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

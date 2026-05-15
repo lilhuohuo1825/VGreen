@@ -30,7 +30,7 @@ const {
 } = require("./db");
 
 const app = express();
-// Railway tự động cung cấp PORT qua environment variable
+// Hosting platforms such as Render provide PORT via environment variable
 // Fallback về 3000 cho local development
 const PORT = process.env.PORT || 3000;
 
@@ -7948,7 +7948,7 @@ app.get("/api/health", (req, res) => {
 // SERVER START
 // ============================================================================
 
-// Railway cần listen trên 0.0.0.0, không phải localhost
+// Render cần listen trên 0.0.0.0, không phải localhost
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Backend API server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);

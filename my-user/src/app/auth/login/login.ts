@@ -161,7 +161,7 @@ export class Login implements OnInit {
         if (error.status === 0) {
           // Network error - không kết nối được đến backend
           this.loginError =
-            'Không thể kết nối đến server. Vui lòng kiểm tra backend đang chạy tại http://localhost:3000';
+            'Không thể kết nối đến server. Vui lòng kiểm tra backend đang chạy tại https://vgreen.onrender.com';
         } else if (error.status === 503) {
           // Service Unavailable - MongoDB chưa kết nối
           this.loginError = 'Server chưa sẵn sàng. Vui lòng thử lại sau.';
@@ -226,7 +226,7 @@ export class Login implements OnInit {
         if (error.status === 0) {
           // Network error - không kết nối được đến backend
           this.loginError =
-            'Không thể kết nối đến server. Vui lòng kiểm tra backend đang chạy tại http://localhost:3000';
+            'Không thể kết nối đến server. Vui lòng kiểm tra backend đang chạy tại https://vgreen.onrender.com';
         } else if (error.status === 503) {
           // Service Unavailable - MongoDB chưa kết nối
           this.loginError = 'Server chưa sẵn sàng. Vui lòng thử lại sau.';
